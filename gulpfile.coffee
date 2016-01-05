@@ -24,9 +24,8 @@ gulp.task 'coffee', ->
         .pipe gulp.dest 'js'
 
 gulp.task 'coffee_release', ->
-    gulp.src ['*.coffee'], base: '.'
+    gulp.src ['coffee/*.coffee'], base: 'coffee'
         .pipe plumber()
-        .pipe changed 'js'
         .pipe pepper
             stringify: -> '""'
             paprika: 
