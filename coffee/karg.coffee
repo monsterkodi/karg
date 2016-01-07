@@ -51,6 +51,14 @@ parse = (config) ->
             h += "  #{chalk.gray '-'}#{s}, #{chalk.gray '--'}#{k}"
             h += chalk.gray.bold "  #{_.padRight '', Math.max(0,12-s.length-k.length)} #{help[s]}"
             h += chalk.magenta.bold "  #{_.padRight '', Math.max(0,30-help[s].length)} #{r[k]}"
+    h += '\n\n'
+    version = c[n]['version']['=']
+    delete c[n]
+    h += noon.stringify c, 
+        maxalign: 21
+        colors: 
+            key:     chalk.gray
+            string:  chalk.white
     h += '\n'
     
     while a.length
@@ -65,7 +73,7 @@ parse = (config) ->
             console.log h
             process.exit()
         else if k == 'version'
-            console.log c[n][k]['=']
+            console.log version
             process.exit()
             
         if r[k] == false or r[k] == true

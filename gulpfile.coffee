@@ -1,7 +1,6 @@
 del  = require 'del'
 path = require 'path'
 gulp = require 'gulp'
-chng = require 'gulp-changed-in-place'
 p    = require('gulp-load-plugins') lazy:false
 (eval "#{k} = p.#{k}" for k,v of p)
  
@@ -10,7 +9,6 @@ onError = (err) -> util.log err
 gulp.task 'coffee', ->
     gulp.src ['coffee/*.coffee'], base: 'coffee'
         .pipe plumber()
-        .pipe chng()
         .pipe debug 'coffee'
         .pipe salt()
         .pipe gulp.dest 'coffee'
