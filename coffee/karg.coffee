@@ -61,7 +61,7 @@ parse = (config) ->
 
     h = "\n#{chalk.gray 'usage:'} #{chalk.bold n} "
     h += "#{chalk.gray '['}#{chalk.bold.gray 'options'}#{chalk.gray ']'} "
-    h += "#{chalk.gray '['}#{chalk.bold.yellow p}#{l and chalk.gray ' ... ]' or chalk.gray ']'}\n"
+    h += "#{chalk.gray '['}#{chalk.bold.yellow p}#{l and (chalk.gray ' ... ]') or (chalk.gray ']')}\n"
     h += chalk.yellow.bold "\n#{_.padRight '       '+p, 21} #{chalk.gray c[n][p]['?']}\n"
     h += chalk.gray "\noptions:\n"
     
