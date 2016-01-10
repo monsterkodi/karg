@@ -6,9 +6,9 @@
 000   000  000   000  000   000   0000000 
 ###
 
-noon  = require 'noon'
-chalk = require 'chalk'
-_     = require 'lodash'
+noon   = require 'noon'
+colors = require 'colors'
+_      = require 'lodash'
 
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
@@ -51,7 +51,7 @@ parse = (config) ->
         s = v['-']? and v['-'] or k[0]
         if '*' in Object.keys v
             p = k
-        if '**' in Object.keys v
+        else if '**' in Object.keys v
             p = k
             l = true
             r[p] = []
@@ -59,18 +59,18 @@ parse = (config) ->
             short[s] = k
             help[s] = v['?']
 
-    h = "\n#{chalk.gray 'usage:'} #{chalk.bold n} "
-    h += "#{chalk.gray '['}#{chalk.bold.gray 'options'}#{chalk.gray ']'} "
-    h += "#{chalk.gray '['}#{chalk.bold.yellow p}#{l and (chalk.gray ' ... ]') or (chalk.gray ']')}\n"
-    h += chalk.yellow.bold "\n#{_.padRight '       '+p, 21} #{chalk.gray c[n][p]['?']}\n"
-    h += chalk.gray "\noptions:\n"
+    h = "\n#{'usage:'.gray} #{n.bold} "
+    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} "
+    h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}\n"
+    h += "\n#{_.padRight '       '+p, 21} #{c[n][p]['?'].gray}\n".yellow.bold
+    h += "\noptions:\n".gray
     
     for s,k of short
         if help[s]?
             h += '\n'
-            h += "  #{chalk.gray '-'}#{s}, #{chalk.gray '--'}#{k}"
-            h += chalk.gray.bold "  #{_.padRight '', Math.max(0,12-s.length-k.length)} #{help[s]}"
-            h += chalk.magenta   "  #{_.padRight '', Math.max(0,30-help[s].length)} #{r[k]}" if r[k]?
+            h += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
+            h += "  #{_.padRight '', Math.max(0,12-s.length-k.length)} #{help[s]}".gray.bold
+            h += "  #{_.padRight '', Math.max(0,30-help[s].length)} #{r[k]}".magenta if r[k]?
     h += '\n\n'
     
     short['h'] = 'help'
@@ -85,8 +85,8 @@ parse = (config) ->
         h += noon.stringify c, 
             maxalign: 21
             colors: 
-                key:     chalk.gray
-                string:  chalk.white
+                key:     colors.gray
+                string:  colors.white
         h += '\n'
         
     while a.length
