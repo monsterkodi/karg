@@ -42,23 +42,26 @@ parse = (config) ->
     n = Object.keys(c)[0]
     r = {}
     p = ''
+    l = false
     help = {}
-    short =
-        h: 'help'
-        V: 'version'
+    short = {}
 
     for k,v of c[n]
         if v['=']? then r[k] = v['=']
         s = v['-']? and v['-'] or k[0]
-        short[s] = k
         if '*' in Object.keys v
             p = k
+        if '**' in Object.keys v
+            p = k
+            l = true
+            r[p] = []
         else
+            short[s] = k
             help[s] = v['?']
 
     h = "\n#{chalk.gray 'usage:'} #{chalk.bold n} "
     h += "#{chalk.gray '['}#{chalk.bold.gray 'options'}#{chalk.gray ']'} "
-    h += "#{chalk.gray '['}#{chalk.bold.yellow p}#{chalk.gray ']'}\n"
+    h += "#{chalk.gray '['}#{chalk.bold.yellow p}#{l and chalk.gray ' ... ]' or chalk.gray ']'}\n"
     h += chalk.yellow.bold "\n#{_.padRight '       '+p, 21} #{chalk.gray c[n][p]['?']}\n"
     h += chalk.gray "\noptions:\n"
     
@@ -69,14 +72,22 @@ parse = (config) ->
             h += chalk.gray.bold "  #{_.padRight '', Math.max(0,12-s.length-k.length)} #{help[s]}"
             h += chalk.magenta   "  #{_.padRight '', Math.max(0,30-help[s].length)} #{r[k]}" if r[k]?
     h += '\n\n'
-    version = c[n]['version']['=']
+    
+    short['h'] = 'help'
+    
+    if c['version']?
+        version = c['version']
+        delete c['version']
+        short['V'] = 'version'
+        
     delete c[n]
-    h += noon.stringify c, 
-        maxalign: 21
-        colors: 
-            key:     chalk.gray
-            string:  chalk.white
-    h += '\n'
+    if not _.isEmpty c
+        h += noon.stringify c, 
+            maxalign: 21
+            colors: 
+                key:     chalk.gray
+                string:  chalk.white
+        h += '\n'
         
     while a.length
         k = a.shift()
@@ -100,7 +111,10 @@ parse = (config) ->
         else if k in _.values short
             r[k] = a.shift()
         else
-            r[p] = k
+            if l
+                r[p].push k
+            else
+                r[p] = k
     r
 
 module.exports = parse

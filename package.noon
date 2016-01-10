@@ -1,0 +1,18 @@
+name            karg
+version         0.1.5
+description     option parser
+main            js/karg.js
+keywords        
+                option
+                parser
+author          monsterkodi
+license         Unlicense
+repository      
+                type    git
+                url     https://github.com/monsterkodi/karg
+bugs            
+                url     https://github.com/monsterkodi/noon/karg
+dependencies    
+                chalk   ^1.1.1
+                lodash  ^3.10.1
+                noon    >=0.5.6
