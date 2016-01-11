@@ -8,7 +8,7 @@ is also an option parser with **meager features** but **simple setup** and **pre
 
 ### meager features
 
-does just the bare minimum of what I need:
+does just the bare minimum:
 
 - short and long option names
 - list of unnamed arguments
