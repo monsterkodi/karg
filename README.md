@@ -24,10 +24,11 @@ does just the bare minimum of what I need:
 args = require('kargs') """
 
 scriptname
-    anOption  . ? some description  . = default
-    boolean   . ? -b to turn it on  . = false
-    switch    . ? -s to turn it off . = true
-    invisible                       . = hidden
+    additional  . ? unnamed arguments . **
+    anOption    . ? some description  . = default
+    boolean     . ? -b to turn it on  . = false
+    switch      . ? -s to turn it off . = true
+    invisible                         . = hidden
     
 additional help topic
     some help
