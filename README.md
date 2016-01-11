@@ -11,7 +11,7 @@ and **pretty output**
 
 ### meager features
 
-does just the bare minimum of what I need in my projects:
+does just the bare minimum of what I need:
 
 - short and long option names
 - list of unnamed arguments
@@ -20,16 +20,14 @@ does just the bare minimum of what I need in my projects:
 
 ### simple setup
 
-the setup is done with a single noon string:
-
 ```coffee
 args = require('kargs') """
 
 scriptname
-    anOption  . ? some description  . = default value
+    anOption  . ? some description  . = default
     boolean   . ? -b to turn it on  . = false
     switch    . ? -s to turn it off . = true
-    invisible                       . = a 'hidden' option
+    invisible                       . = hidden
     
 additional help topic
     some help
@@ -42,3 +40,6 @@ version       1.0.0
 ### pretty output
 
 ![karg](https://raw.githubusercontent.com/monsterkodi/karg/master/karg.png)
+
+
+### notes
