@@ -18,7 +18,7 @@ does just the bare minimum:
 ### simple setup
 
 ```coffee
-args = require('kargs') """
+args = require('karg') """
 
 scriptname
     additional  . ? unnamed arguments . **
