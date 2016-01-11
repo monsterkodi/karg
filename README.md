@@ -4,10 +4,7 @@ is the german word for **meager, barren, sparse**
 
 ### karg
 
-is also an option parser  
-with **meager features**  
-but **simple setup**  
-and **pretty output**
+is also an option parser with **meager features** but **simple setup** and **pretty output**
 
 ### meager features
 
