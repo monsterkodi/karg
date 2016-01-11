@@ -41,4 +41,4 @@ version       1.0.0
 
 ### pretty output
 
-![karg](https://raw.githubusercontent.com/monsterkodi/krag/master/karg.png)
+![karg](https://raw.githubusercontent.com/monsterkodi/karg/master/karg.png)
