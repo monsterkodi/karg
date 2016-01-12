@@ -100,7 +100,7 @@ parse = (config) ->
         if k == 'help'
             console.log h
             process.exit()
-        else if k == 'version'
+        else if k == 'version' and version?
             console.log version
             process.exit()
             

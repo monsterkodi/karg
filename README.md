@@ -1,6 +1,6 @@
 ### karg
 
-is the german word for **meager, barren, sparse**
+is the german word for **meager**, **barren**, **sparse**
 
 ### karg
 
