@@ -61,8 +61,11 @@ parse = (config) ->
 
     h = "\n#{'usage:'.gray} #{n.bold} "
     h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} "
-    h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}\n"
-    h += "\n#{_.padRight '       '+p, 21} #{c[n][p]['?'].gray}\n".yellow.bold
+    h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
+    h += '\n'
+    h += "\n#{_.padRight '       '+p, 21} #{c[n][p]['?'].gray}".yellow.bold
+    h += "  #{_.padRight '', Math.max(0,30-c[n][p]['?'].length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
+    h += '\n'
     h += "\noptions:\n".gray
     
     for s,k of short
