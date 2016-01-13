@@ -63,8 +63,8 @@ parse = (config) ->
     h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} "
     h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
     h += '\n'
-    h += "\n#{_.padRight '       '+p, 21} #{c[n][p]['?'].gray}".yellow.bold
-    h += "  #{_.padRight '', Math.max(0,30-c[n][p]['?'].length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
+    h += "\n#{_.padEnd '       '+p, 21} #{c[n][p]['?'].gray}".yellow.bold
+    h += "  #{_.padEnd '', Math.max(0,30-c[n][p]['?'].length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
     h += '\n'
     h += "\noptions:\n".gray
     
@@ -72,8 +72,8 @@ parse = (config) ->
         if help[s]?
             h += '\n'
             h += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
-            h += "  #{_.padRight '', Math.max(0,12-s.length-k.length)} #{help[s]}".gray.bold
-            h += "  #{_.padRight '', Math.max(0,30-help[s].length)} #{r[k]}".magenta if r[k]?
+            h += "  #{_.padEnd '', Math.max(0,12-s.length-k.length)} #{help[s]}".gray.bold
+            h += "  #{_.padEnd '', Math.max(0,30-help[s].length)} #{r[k]}".magenta if r[k]?
     h += '\n\n'
     
     short['h'] = 'help'
