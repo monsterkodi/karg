@@ -94,11 +94,17 @@ parse = (config) ->
         
     while a.length
         k = a.shift()
-                
+            
         if k.startsWith '--'
             k = k.substr 2
         else if k[0] == '-'
             k = short[k.substr 1]
+        else 
+            if l
+                r[p].push k
+            else
+                r[p] = k
+            continue
             
         if k == 'help'
             console.log h
