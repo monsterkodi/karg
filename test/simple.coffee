@@ -1,7 +1,7 @@
 
-args = require('./') """
+args = require('../') """
 
-scriptname
+simple
     additional  . ? unnamed arguments . **
     anOption    . ? some description  . = default
     boolean     . ? -b to turn it on  . = false

@@ -9,6 +9,7 @@
 noon   = require 'noon'
 colors = require 'colors'
 _      = require 'lodash'
+log    = console.log
 
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
@@ -28,6 +29,19 @@ expand = (l) ->
     l
 
 ###
+00000000  00000000   00000000    0000000   00000000 
+000       000   000  000   000  000   000  000   000
+0000000   0000000    0000000    000   000  0000000  
+000       000   000  000   000  000   000  000   000
+00000000  000   000  000   000   0000000   000   000
+###
+
+error = (msg) ->
+    s = "[".dim.red + "ERROR".bold.dim.red + "] ".dim.red 
+    s += msg.trim().split('\n').join("\n        ").red
+    log s
+
+###
 00000000    0000000   00000000    0000000  00000000
 000   000  000   000  000   000  000       000     
 00000000   000000000  0000000    0000000   0000000 
@@ -45,8 +59,16 @@ parse = (config) ->
     l = false
     help = {}
     short = {}
-
+    
     for k,v of c[n]
+        
+        if 0 <= k.indexOf ' '
+            error """
+            wrong karg setup: #{"keys can't contain spaces!".bold}
+            broken key: #{k.bold.yellow}
+            """
+            process.exit 1
+        
         if v['=']? then r[k] = v['=']
         s = v['-']? and v['-'] or k[0]
         if '*' in Object.keys v
@@ -58,6 +80,8 @@ parse = (config) ->
         else
             short[s] = k
             help[s] = v['?']
+
+    log c
 
     h = "\n#{'usage:'.gray} #{n.bold} "
     h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} "
@@ -107,10 +131,10 @@ parse = (config) ->
             continue
             
         if k == 'help'
-            console.log h
+            log h
             process.exit()
         else if k == 'version' and version?
-            console.log version
+            log version
             process.exit()
             
         if r[k] == false or r[k] == true
