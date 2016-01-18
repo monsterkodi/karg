@@ -81,8 +81,6 @@ parse = (config) ->
             short[s] = k
             help[s] = v['?']
 
-    log c
-
     h = "\n#{'usage:'.gray} #{n.bold} "
     h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} "
     h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
