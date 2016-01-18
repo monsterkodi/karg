@@ -117,7 +117,7 @@ parse = (config) ->
     while a.length
         k = a.shift()
             
-        if k.startsWith '--'
+        if k.substr(0,2) == '--'
             k = k.substr 2
         else if k[0] == '-'
             k = short[k.substr 1]
