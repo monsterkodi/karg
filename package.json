@@ -1,6 +1,6 @@
 {
   "name": "karg",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "description": "option parser",
   "main": "js/karg.js",
   "keywords": [
@@ -23,5 +23,5 @@
   },
   "konrad": {
     "bump on": "commit"
-  }  
+  }
 }
