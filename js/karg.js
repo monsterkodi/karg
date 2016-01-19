@@ -107,7 +107,7 @@
     h += '\n';
     h += ("\n" + (_.padEnd('       ' + p, 21)) + " " + c[n][p]['?'].gray).yellow.bold;
     if ((c[n][p]['='] != null) && !l) {
-      h += ("  " + (_.padEnd('', Math.max(0, 30 - c[n][p]['?'].length))) + " " + c[n][p]['=']).magenta;
+      h += ("  " + (_.padEnd('', Math.max(0, 30 - c[n][p]['?'].strip.length))) + " " + c[n][p]['=']).magenta;
     }
     h += '\n';
     h += "\noptions:\n".gray;
@@ -118,7 +118,7 @@
         h += "  " + '-'.gray + s + ', --'.gray + k;
         h += ("  " + (_.padEnd('', Math.max(0, 12 - s.length - k.length))) + " " + help[s]).gray.bold;
         if (r[k] != null) {
-          h += ("  " + (_.padEnd('', Math.max(0, 30 - help[s].length))) + " " + r[k]).magenta;
+          h += ("  " + (_.padEnd('', Math.max(0, 30 - help[s].strip.length))) + " " + r[k]).magenta;
         }
       }
     }
