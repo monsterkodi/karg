@@ -20,5 +20,8 @@
     "colors": "^1.1.2",
     "lodash": "^4.0.0",
     "noon": ">=0.7.3"
-  }
+  },
+  "konrad": {
+    "bump on": "commit"
+  }  
 }
