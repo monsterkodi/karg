@@ -1,5 +1,5 @@
 name            karg
-version         0.1.30
+version         0.1.31
 description     option parser
 main            js/karg.js
 keywords        
@@ -16,5 +16,3 @@ dependencies
                 colors  ^1.1.2
                 lodash  ^4.0.0
                 noon    >=0.7.3
-konrad          
-                bump on     commit
