@@ -70,7 +70,7 @@
    */
 
   parse = function(config) {
-    var a, c, h, help, k, l, n, p, r, ref, s, short, v, version;
+    var a, c, h, help, k, l, n, oh, p, r, ref, ref1, s, short, v, version;
     a = expand(process.argv.slice(2));
     c = noon.parse(config);
     n = Object.keys(c)[0];
@@ -102,27 +102,35 @@
       }
     }
     h = "\n" + 'usage:'.gray + " " + n.bold + " ";
-    h += "" + '['.gray + 'options'.bold.gray + ']'.gray + " ";
+    if (1 < _.size(short)) {
+      h += "" + '['.gray + 'options'.bold.gray + ']'.gray + " ";
+    }
     h += "" + '['.gray + p.bold.yellow + (l && ' ... ]'.gray || ']'.gray);
     h += '\n';
-    h += ("\n" + (_.padEnd('       ' + p, 21)) + " " + c[n][p]['?'].gray).yellow.bold;
-    if ((c[n][p]['='] != null) && !l) {
-      h += ("  " + (_.padEnd('', Math.max(0, 30 - c[n][p]['?'].strip.length))) + " " + c[n][p]['=']).magenta;
+    if ((ref1 = c[n][p]) != null ? ref1['?'] : void 0) {
+      h += ("\n" + (_.padEnd('       ' + p, 21)) + " " + c[n][p]['?'].gray).yellow.bold;
+      if ((c[n][p]['='] != null) && !l) {
+        h += ("  " + (_.padEnd('', Math.max(0, 30 - c[n][p]['?'].strip.length))) + " " + c[n][p]['=']).magenta;
+      }
+      h += '\n';
     }
-    h += '\n';
-    h += "\noptions:\n".gray;
+    oh = "";
     for (s in short) {
       k = short[s];
       if (help[s] != null) {
-        h += '\n';
-        h += "  " + '-'.gray + s + ', --'.gray + k;
-        h += ("  " + (_.padEnd('', Math.max(0, 12 - s.length - k.length))) + " " + help[s]).gray.bold;
+        oh += '\n';
+        oh += "  " + '-'.gray + s + ', --'.gray + k;
+        oh += ("  " + (_.padEnd('', Math.max(0, 12 - s.length - k.length))) + " " + help[s]).gray.bold;
         if (r[k] != null) {
-          h += ("  " + (_.padEnd('', Math.max(0, 30 - help[s].strip.length))) + " " + r[k]).magenta;
+          oh += ("  " + (_.padEnd('', Math.max(0, 30 - help[s].strip.length))) + " " + r[k]).magenta;
         }
       }
     }
-    h += '\n\n';
+    if (oh.length) {
+      h += "\noptions:\n".gray;
+      h += oh;
+      h += '\n\n';
+    }
     short['h'] = 'help';
     if (c['version'] != null) {
       version = c['version'];

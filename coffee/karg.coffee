@@ -82,21 +82,24 @@ parse = (config) ->
             help[s] = v['?']
 
     h = "\n#{'usage:'.gray} #{n.bold} "
-    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} "
+    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < _.size short
     h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
     h += '\n'
-    h += "\n#{_.padEnd '       '+p, 21} #{c[n][p]['?'].gray}".yellow.bold
-    h += "  #{_.padEnd '', Math.max(0,30-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
-    h += '\n'
-    h += "\noptions:\n".gray
-    
+    if c[n][p]?['?']
+        h += "\n#{_.padEnd '       '+p, 21} #{c[n][p]['?'].gray}".yellow.bold
+        h += "  #{_.padEnd '', Math.max(0,30-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
+        h += '\n'
+    oh = ""
     for s,k of short
         if help[s]?
-            h += '\n'
-            h += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
-            h += "  #{_.padEnd '', Math.max(0,12-s.length-k.length)} #{help[s]}".gray.bold
-            h += "  #{_.padEnd '', Math.max(0,30-help[s].strip.length)} #{r[k]}".magenta if r[k]?
-    h += '\n\n'
+            oh += '\n'
+            oh += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
+            oh += "  #{_.padEnd '', Math.max(0,12-s.length-k.length)} #{help[s]}".gray.bold
+            oh += "  #{_.padEnd '', Math.max(0,30-help[s].strip.length)} #{r[k]}".magenta if r[k]?
+    if oh.length
+        h += "\noptions:\n".gray
+        h += oh
+        h += '\n\n'
     
     short['h'] = 'help'
     
