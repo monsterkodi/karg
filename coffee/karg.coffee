@@ -93,7 +93,7 @@ parse = (config) ->
     for s,k of short
         if help[s]?
             df = switch r[k]
-                when false then '✘'.red
+                when false then '✘'.red.dim
                 when true  then '✔'.green.bold
                 else r[k]
             oh += '\n'

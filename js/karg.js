@@ -121,7 +121,7 @@
         df = (function() {
           switch (r[k]) {
             case false:
-              return '✘'.red;
+              return '✘'.red.dim;
             case true:
               return '✔'.green.bold;
             default:
