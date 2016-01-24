@@ -92,10 +92,14 @@ parse = (config) ->
     oh = ""
     for s,k of short
         if help[s]?
+            df = switch r[k]
+                when false then '✘'.red
+                when true  then '✔'.green.bold
+                else r[k]
             oh += '\n'
             oh += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
             oh += "  #{_.padEnd '', Math.max(0,12-s.length-k.length)} #{help[s]}".gray.bold
-            oh += "  #{_.padEnd '', Math.max(0,30-help[s].strip.length)} #{r[k]}".magenta if r[k]?
+            oh += "  #{_.padEnd '', Math.max(0,30-help[s].strip.length)} #{df}".magenta if df?
     if oh.length
         h += "\noptions:\n".gray
         h += oh

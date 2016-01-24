@@ -70,7 +70,7 @@
    */
 
   parse = function(config) {
-    var a, c, h, help, k, l, n, oh, p, r, ref, ref1, s, short, v, version;
+    var a, c, df, h, help, k, l, n, oh, p, r, ref, ref1, s, short, v, version;
     a = expand(process.argv.slice(2));
     c = noon.parse(config);
     n = Object.keys(c)[0];
@@ -118,11 +118,21 @@
     for (s in short) {
       k = short[s];
       if (help[s] != null) {
+        df = (function() {
+          switch (r[k]) {
+            case false:
+              return '✘'.red;
+            case true:
+              return '✔'.green.bold;
+            default:
+              return r[k];
+          }
+        })();
         oh += '\n';
         oh += "  " + '-'.gray + s + ', --'.gray + k;
         oh += ("  " + (_.padEnd('', Math.max(0, 12 - s.length - k.length))) + " " + help[s]).gray.bold;
-        if (r[k] != null) {
-          oh += ("  " + (_.padEnd('', Math.max(0, 30 - help[s].strip.length))) + " " + r[k]).magenta;
+        if (df != null) {
+          oh += ("  " + (_.padEnd('', Math.max(0, 30 - help[s].strip.length))) + " " + df).magenta;
         }
       }
     }
