@@ -1,5 +1,5 @@
 name          karg
-version       0.3.0
+version       0.3.1
 description   option parser
 main          js/karg.js
 keywords
