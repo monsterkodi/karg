@@ -1,6 +1,6 @@
 {
   "name": "karg",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "option parser",
   "main": "js/karg.js",
   "keywords": [
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "colors": "^1.1.2",
-    "lodash": "^4.0.0",
-    "noon": ">=0.8.3"
+    "lodash": "^4.0.1",
+    "noon": ">=0.9.1"
   }
 }
