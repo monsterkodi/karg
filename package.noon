@@ -14,5 +14,5 @@ bugs
               url   https://github.com/monsterkodi/noon/karg
 dependencies
               colors  ^1.1.2
-              lodash  ^4.0.1
-              noon    >=0.9.1
+              lodash  ^4.1.0
+              noon    >=0.9.13

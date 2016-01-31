@@ -1,3 +1,6 @@
+
+![icon](./img/icon.png)
+
 ### karg
 
 is the german word for **meager**, **barren**, **sparse**
@@ -37,4 +40,4 @@ version       1.0.0
 
 ### pretty output
 
-![karg](https://raw.githubusercontent.com/monsterkodi/karg/master/karg.png)
+![karg](./img/karg.png)
