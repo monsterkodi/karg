@@ -101,19 +101,14 @@
         help[s] = v['?'];
       }
     }
-    h = "\n" + 'usage:'.gray + " " + n.bold + " ";
-    if (1 < _.size(short)) {
-      h += "" + '['.gray + 'options'.bold.gray + ']'.gray + " ";
-    }
-    h += "" + '['.gray + p.bold.yellow + (l && ' ... ]'.gray || ']'.gray);
-    h += '\n';
-    if ((ref1 = c[n][p]) != null ? ref1['?'] : void 0) {
-      h += ("\n" + (_.padEnd('       ' + p, 21)) + " " + c[n][p]['?'].gray).yellow.bold;
-      if ((c[n][p]['='] != null) && !l) {
-        h += ("  " + (_.padEnd('', Math.max(0, 30 - c[n][p]['?'].strip.length))) + " " + c[n][p]['=']).magenta;
-      }
-      h += '\n';
-    }
+
+    /*
+     0000000   00000000   000000000  000   0000000   000   000   0000000
+    000   000  000   000     000     000  000   000  0000  000  000     
+    000   000  00000000      000     000  000   000  000 0 000  0000000 
+    000   000  000           000     000  000   000  000  0000       000
+     0000000   000           000     000   0000000   000   000  0000000
+     */
     oh = "";
     maxKeyLength = 0;
     maxHelpLength = 0;
@@ -145,6 +140,27 @@
         }
       }
     }
+
+    /*
+    000   000  00000000  000      00000000 
+    000   000  000       000      000   000
+    000000000  0000000   000      00000000 
+    000   000  000       000      000      
+    000   000  00000000  0000000  000
+     */
+    h = "\n" + 'usage:'.gray + "  " + n.bold + " ";
+    if (1 < _.size(short)) {
+      h += "" + '['.gray + 'options'.bold.gray + ']'.gray + " ";
+    }
+    h += "" + '['.gray + p.bold.yellow + (l && ' ... ]'.gray || ']'.gray);
+    h += '\n';
+    if ((ref1 = c[n][p]) != null ? ref1['?'] : void 0) {
+      h += ("\n" + (_.padEnd('        ' + p, maxKeyLength + 9)) + " " + c[n][p]['?'].gray).yellow.bold;
+      if ((c[n][p]['='] != null) && !l) {
+        h += ("  " + (_.padEnd('', Math.max(0, maxHelpLength - c[n][p]['?'].strip.length))) + " " + c[n][p]['=']).magenta;
+      }
+      h += '\n';
+    }
     if (oh.length) {
       h += "\noptions:\n".gray;
       h += oh;
@@ -159,7 +175,7 @@
     delete c[n];
     if (!_.isEmpty(c)) {
       h += noon.stringify(c, {
-        maxalign: 7,
+        maxalign: 8,
         colors: {
           key: colors.gray,
           string: colors.white
@@ -167,6 +183,14 @@
       });
       h += '\n';
     }
+
+    /*
+    00000000   00000000   0000000  000   000  000      000000000
+    000   000  000       000       000   000  000         000   
+    0000000    0000000   0000000   000   000  000         000   
+    000   000  000            000  000   000  000         000   
+    000   000  00000000  0000000    0000000   0000000     000
+     */
     while (a.length) {
       k = a.shift();
       if (k.substr(0, 2) === '--') {

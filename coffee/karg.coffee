@@ -81,15 +81,14 @@ parse = (config) ->
             short[s] = k
             help[s] = v['?']
 
-    h = "\n#{'usage:'.gray} #{n.bold} "
-    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < _.size short
-    h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
-    h += '\n'
-    if c[n][p]?['?']
-        h += "\n#{_.padEnd '       '+p, 21} #{c[n][p]['?'].gray}".yellow.bold
-        h += "  #{_.padEnd '', Math.max(0,30-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
-        h += '\n'
-
+    ###
+     0000000   00000000   000000000  000   0000000   000   000   0000000
+    000   000  000   000     000     000  000   000  0000  000  000     
+    000   000  00000000      000     000  000   000  000 0 000  0000000 
+    000   000  000           000     000  000   000  000  0000       000
+     0000000   000           000     000   0000000   000   000  0000000 
+    ###
+    
     oh = ""
     
     maxKeyLength = 0
@@ -109,6 +108,23 @@ parse = (config) ->
             oh += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
             oh += "  #{_.padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
             oh += "  #{_.padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
+
+    ###
+    000   000  00000000  000      00000000 
+    000   000  000       000      000   000
+    000000000  0000000   000      00000000 
+    000   000  000       000      000      
+    000   000  00000000  0000000  000      
+    ###
+    
+    h = "\n#{'usage:'.gray}  #{n.bold} "
+    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < _.size short
+    h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
+    h += '\n'
+    if c[n][p]?['?']
+        h += "\n#{_.padEnd '        '+p, maxKeyLength+9} #{c[n][p]['?'].gray}".yellow.bold
+        h += "  #{_.padEnd '', Math.max(0,maxHelpLength-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
+        h += '\n'
             
     if oh.length
         h += "\noptions:\n".gray
@@ -125,11 +141,19 @@ parse = (config) ->
     delete c[n]
     if not _.isEmpty c
         h += noon.stringify c, 
-            maxalign: 7
+            maxalign: 8
             colors: 
                 key:     colors.gray
                 string:  colors.white
         h += '\n'
+        
+    ###
+    00000000   00000000   0000000  000   000  000      000000000
+    000   000  000       000       000   000  000         000   
+    0000000    0000000   0000000   000   000  000         000   
+    000   000  000            000  000   000  000         000   
+    000   000  00000000  0000000    0000000   0000000     000   
+    ###
         
     while a.length
         k = a.shift()

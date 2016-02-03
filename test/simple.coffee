@@ -2,7 +2,7 @@
 args = require('../') """
 
 simple
-    additional  . ? unnamed arguments . **
+    additional  . ? unnamed argument  . * . = no name
     anOption    . ? some description  . = default
     boolean     . ? -b to turn it on  . = false
     switch      . ? -s to turn it off . = true

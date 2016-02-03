@@ -2,7 +2,7 @@
 args = require('../') """
 
 long
-    veryLongKeyName  . ? some very long description text which doesn't make much sense. . **
+    veryLongKeyName  . ? some very long description text which doesn't make much sense. . * . = and some default
     anotherLongOne   . ? some modest length description. . = but very long default that doesn't make sense either...
     short   . ? simple . = true
     
