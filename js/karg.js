@@ -70,7 +70,7 @@
    */
 
   parse = function(config) {
-    var a, c, df, h, help, k, l, n, oh, p, r, ref, ref1, s, short, v, version;
+    var a, c, df, h, help, k, l, maxHelpLength, maxKeyLength, n, oh, p, r, ref, ref1, s, short, v, version;
     a = expand(process.argv.slice(2));
     c = noon.parse(config);
     n = Object.keys(c)[0];
@@ -115,6 +115,15 @@
       h += '\n';
     }
     oh = "";
+    maxKeyLength = 0;
+    maxHelpLength = 0;
+    for (s in short) {
+      k = short[s];
+      if (help[s] != null) {
+        maxKeyLength = Math.max(maxKeyLength, s.length + k.length);
+        maxHelpLength = Math.max(maxHelpLength, help[s].strip.length);
+      }
+    }
     for (s in short) {
       k = short[s];
       if (help[s] != null) {
@@ -130,9 +139,9 @@
         })();
         oh += '\n';
         oh += "  " + '-'.gray + s + ', --'.gray + k;
-        oh += ("  " + (_.padEnd('', Math.max(0, 12 - s.length - k.length))) + " " + help[s]).gray.bold;
+        oh += ("  " + (_.padEnd('', Math.max(0, maxKeyLength - s.length - k.length))) + " " + help[s]).gray.bold;
         if (df != null) {
-          oh += ("  " + (_.padEnd('', Math.max(0, 30 - help[s].strip.length))) + " " + df).magenta;
+          oh += ("  " + (_.padEnd('', Math.max(0, maxHelpLength - help[s].strip.length))) + " " + df).magenta;
         }
       }
     }
@@ -150,7 +159,7 @@
     delete c[n];
     if (!_.isEmpty(c)) {
       h += noon.stringify(c, {
-        maxalign: 21,
+        maxalign: 7,
         colors: {
           key: colors.gray,
           string: colors.white

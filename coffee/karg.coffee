@@ -58,7 +58,7 @@ parse = (config) ->
     p = ''
     l = false
     help = {}
-    short = {}
+    short = {} # maps shortcut keys to long key names
     
     for k,v of c[n]
         
@@ -89,7 +89,16 @@ parse = (config) ->
         h += "\n#{_.padEnd '       '+p, 21} #{c[n][p]['?'].gray}".yellow.bold
         h += "  #{_.padEnd '', Math.max(0,30-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
         h += '\n'
+
     oh = ""
+    
+    maxKeyLength = 0
+    maxHelpLength = 0
+    for s,k of short
+        if help[s]?
+            maxKeyLength = Math.max(maxKeyLength, s.length+k.length)
+            maxHelpLength = Math.max(maxHelpLength, help[s].strip.length)
+            
     for s,k of short
         if help[s]?
             df = switch r[k]
@@ -98,8 +107,9 @@ parse = (config) ->
                 else r[k]
             oh += '\n'
             oh += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
-            oh += "  #{_.padEnd '', Math.max(0,12-s.length-k.length)} #{help[s]}".gray.bold
-            oh += "  #{_.padEnd '', Math.max(0,30-help[s].strip.length)} #{df}".magenta if df?
+            oh += "  #{_.padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
+            oh += "  #{_.padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
+            
     if oh.length
         h += "\noptions:\n".gray
         h += oh
@@ -115,7 +125,7 @@ parse = (config) ->
     delete c[n]
     if not _.isEmpty c
         h += noon.stringify c, 
-            maxalign: 21
+            maxalign: 7
             colors: 
                 key:     colors.gray
                 string:  colors.white
