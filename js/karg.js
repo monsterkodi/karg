@@ -133,10 +133,10 @@
           }
         })();
         oh += '\n';
-        oh += "  " + '-'.gray + s + ', --'.gray + k;
-        oh += ("  " + (_.padEnd('', Math.max(0, maxKeyLength - s.length - k.length))) + " " + help[s]).gray.bold;
+        oh += "    " + '-'.gray + s + ', --'.gray + k;
+        oh += ("    " + (_.padEnd('', Math.max(0, maxKeyLength - s.length - k.length))) + " " + help[s]).gray.bold;
         if (df != null) {
-          oh += ("  " + (_.padEnd('', Math.max(0, maxHelpLength - help[s].strip.length))) + " " + df).magenta;
+          oh += ("    " + (_.padEnd('', Math.max(0, maxHelpLength - help[s].strip.length))) + " " + df).magenta;
         }
       }
     }

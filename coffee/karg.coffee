@@ -105,9 +105,9 @@ parse = (config) ->
                 when true  then '✔'.green.bold
                 else r[k]
             oh += '\n'
-            oh += "  #{'-'.gray}#{s}#{', --'.gray}#{k}"
-            oh += "  #{_.padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
-            oh += "  #{_.padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
+            oh += "    #{'-'.gray}#{s}#{', --'.gray}#{k}"
+            oh += "    #{_.padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
+            oh += "    #{_.padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
 
     ###
     000   000  00000000  000      00000000 
