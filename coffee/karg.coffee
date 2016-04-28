@@ -141,7 +141,7 @@ parse = (config) ->
     delete c[n]
     if not _.isEmpty c
         h += noon.stringify c, 
-            maxalign: 8
+            maxalign: 16
             colors: 
                 key:     colors.gray
                 string:  colors.white
