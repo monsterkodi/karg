@@ -175,7 +175,7 @@
     delete c[n];
     if (!_.isEmpty(c)) {
       h += noon.stringify(c, {
-        maxalign: 8,
+        maxalign: 16,
         colors: {
           key: colors.gray,
           string: colors.white
