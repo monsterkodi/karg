@@ -1,6 +1,6 @@
 {
   "name": "karg",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "option parser",
   "main": "js/karg.js",
   "keywords": [
