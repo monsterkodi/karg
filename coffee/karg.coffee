@@ -49,7 +49,7 @@ error = (msg) ->
 000        000   000  000   000  0000000   00000000
 ###
 
-parse = (config) ->
+parse = (config, options={}) ->
     
     a = expand process.argv.slice 2
     c = noon.parse config
@@ -171,9 +171,11 @@ parse = (config) ->
             
         if k == 'help'
             log h
+            return if options.dontExit
             process.exit()
         else if k == 'version' and version?
             log version
+            return if options.dontExit
             process.exit()
             
         if r[k] == false or r[k] == true

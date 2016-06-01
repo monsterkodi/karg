@@ -69,8 +69,11 @@
   000        000   000  000   000  0000000   00000000
    */
 
-  parse = function(config) {
+  parse = function(config, options) {
     var a, c, df, h, help, k, l, maxHelpLength, maxKeyLength, n, oh, p, r, ref, ref1, s, short, v, version;
+    if (options == null) {
+      options = {};
+    }
     a = expand(process.argv.slice(2));
     c = noon.parse(config);
     n = Object.keys(c)[0];
@@ -207,9 +210,15 @@
       }
       if (k === 'help') {
         log(h);
+        if (options.dontExit) {
+          return;
+        }
         process.exit();
       } else if (k === 'version' && (version != null)) {
         log(version);
+        if (options.dontExit) {
+          return;
+        }
         process.exit();
       }
       if (r[k] === false || r[k] === true) {
