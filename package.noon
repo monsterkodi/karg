@@ -1,5 +1,5 @@
 name          karg
-version       1.0.7
+version       1.0.8
 description   option parser
 main          js/karg.js
 keywords
@@ -11,7 +11,7 @@ repository
               type  git
               url   https://github.com/monsterkodi/karg
 bugs
-              url   https://github.com/monsterkodi/noon/karg
+              url  https://github.com/monsterkodi/noon/karg
 dependencies
               colors  ^1.1.2
               lodash  ^4.11.1
