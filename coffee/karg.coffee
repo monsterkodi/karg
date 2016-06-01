@@ -49,6 +49,9 @@ error = (msg) ->
 000        000   000  000   000  0000000   00000000
 ###
 
+# options: 
+#     dontExit:    don't exit process on -V/--version or -h/--help  (returns undefined instead)
+
 parse = (config, options={}) ->
     
     a = expand process.argv.slice 2
