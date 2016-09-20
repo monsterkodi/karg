@@ -11,8 +11,8 @@ repository
               type  git
               url   https://github.com/monsterkodi/karg
 bugs
-              url   https://github.com/monsterkodi/noon/karg
+              url  https://github.com/monsterkodi/noon/karg
 dependencies
               colors  ^1.1.2
-              lodash  ^4.13.1
-              noon    >=1.0.11
+              lodash  ^4.16.0
+              noon    >=1.0.13
