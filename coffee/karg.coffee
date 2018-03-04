@@ -178,7 +178,7 @@ parse = (config, options={}) ->
             return if options.dontExit
             process.exit()
         else if k == 'version' and version?
-            log version
+            log version
             return if options.dontExit
             process.exit()
             

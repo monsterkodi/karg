@@ -1,15 +1,27 @@
-
-/*
-000   000   0000000   00000000    0000000 
-000  000   000   000  000   000  000      
-0000000    000000000  0000000    000  0000
-000  000   000   000  000   000  000   000
-000   000  000   000  000   000   0000000
- */
-
 (function() {
+  /*
+  000   000   0000000   00000000    0000000 
+  000  000   000   000  000   000  000      
+  0000000    000000000  0000000    000  0000
+  000  000   000   000  000   000  000   000
+  000   000  000   000  000   000   0000000 
+  */
+  /*
+  00000000  00000000   00000000    0000000   00000000 
+  000       000   000  000   000  000   000  000   000
+  0000000   0000000    0000000    000   000  0000000  
+  000       000   000  000   000  000   000  000   000
+  00000000  000   000  000   000   0000000   000   000
+  */
+  /*
+  00000000  000   000  00000000    0000000   000   000  0000000  
+  000        000 000   000   000  000   000  0000  000  000   000
+  0000000     00000    00000000   000000000  000 0 000  000   000
+  000        000 000   000        000   000  000  0000  000   000
+  00000000  000   000  000        000   000  000   000  0000000  
+  */
   var _, colors, error, expand, log, noon, parse,
-    indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    indexOf = [].indexOf;
 
   noon = require('noon');
 
@@ -18,15 +30,6 @@
   _ = require('lodash');
 
   log = console.log;
-
-
-  /*
-  00000000  000   000  00000000    0000000   000   000  0000000  
-  000        000 000   000   000  000   000  0000  000  000   000
-  0000000     00000    00000000   000000000  000 0 000  000   000
-  000        000 000   000        000   000  000  0000  000   000
-  00000000  000   000  000        000   000  000   000  0000000
-   */
 
   expand = function(l) {
     var a, j, len, match;
@@ -44,15 +47,6 @@
     return l;
   };
 
-
-  /*
-  00000000  00000000   00000000    0000000   00000000 
-  000       000   000  000   000  000   000  000   000
-  0000000   0000000    0000000    000   000  0000000  
-  000       000   000  000   000  000   000  000   000
-  00000000  000   000  000   000   0000000   000   000
-   */
-
   error = function(msg) {
     var s;
     s = "[".dim.red + "ERROR".bold.dim.red + "] ".dim.red;
@@ -60,33 +54,47 @@
     return log(s);
   };
 
-
   /*
   00000000    0000000   00000000    0000000  00000000
   000   000  000   000  000   000  000       000     
   00000000   000000000  0000000    0000000   0000000 
   000        000   000  000   000       000  000     
   000        000   000  000   000  0000000   00000000
-   */
-
-  parse = function(config, options) {
+  */
+  // options: 
+  //     dontExit:    don't exit process on -V/--version or -h/--help  (returns undefined instead)
+  parse = function(config, options = {}) {
+    /*
+    000   000  00000000  000      00000000 
+    000   000  000       000      000   000
+    000000000  0000000   000      00000000 
+    000   000  000       000      000      
+    000   000  00000000  0000000  000      
+    */
+    /*
+     0000000   00000000   000000000  000   0000000   000   000   0000000
+    000   000  000   000     000     000  000   000  0000  000  000     
+    000   000  00000000      000     000  000   000  000 0 000  0000000 
+    000   000  000           000     000  000   000  000  0000       000
+     0000000   000           000     000   0000000   000   000  0000000 
+    */
     var a, c, df, h, help, k, l, maxHelpLength, maxKeyLength, n, oh, p, r, ref, ref1, s, short, v, version;
-    if (options == null) {
-      options = {};
+    if (options.ignoreArgs == null) {
+      options.ignoreArgs = 2;
     }
-    a = expand(process.argv.slice(2));
+    a = expand(process.argv.slice(options.ignoreArgs));
     c = noon.parse(config);
     n = Object.keys(c)[0];
     r = {};
     p = '';
     l = false;
     help = {};
-    short = {};
+    short = {}; // maps shortcut keys to long key names
     ref = c[n];
     for (k in ref) {
       v = ref[k];
       if (0 <= k.indexOf(' ')) {
-        error("wrong karg setup: " + "keys can't contain spaces!".bold + "\nbroken key: " + k.bold.yellow);
+        error(`wrong karg setup: ${"keys can't contain spaces!".bold}\nbroken key: ${k.bold.yellow}`);
         process.exit(1);
       }
       if (v['='] != null) {
@@ -104,14 +112,6 @@
         help[s] = v['?'];
       }
     }
-
-    /*
-     0000000   00000000   000000000  000   0000000   000   000   0000000
-    000   000  000   000     000     000  000   000  0000  000  000     
-    000   000  00000000      000     000  000   000  000 0 000  0000000 
-    000   000  000           000     000  000   000  000  0000       000
-     0000000   000           000     000   0000000   000   000  0000000
-     */
     oh = "";
     maxKeyLength = 0;
     maxHelpLength = 0;
@@ -136,31 +136,23 @@
           }
         })();
         oh += '\n';
-        oh += "    " + '-'.gray + s + ', --'.gray + k;
-        oh += ("    " + (_.padEnd('', Math.max(0, maxKeyLength - s.length - k.length))) + " " + help[s]).gray.bold;
+        oh += `    ${'-'.gray}${s}${', --'.gray}${k}`;
+        oh += `    ${_.padEnd('', Math.max(0, maxKeyLength - s.length - k.length))} ${help[s]}`.gray.bold;
         if (df != null) {
-          oh += ("    " + (_.padEnd('', Math.max(0, maxHelpLength - help[s].strip.length))) + " " + df).magenta;
+          oh += `    ${_.padEnd('', Math.max(0, maxHelpLength - help[s].strip.length))} ${df}`.magenta;
         }
       }
     }
-
-    /*
-    000   000  00000000  000      00000000 
-    000   000  000       000      000   000
-    000000000  0000000   000      00000000 
-    000   000  000       000      000      
-    000   000  00000000  0000000  000
-     */
-    h = "\n" + 'usage:'.gray + "  " + n.bold + " ";
+    h = `\n${'usage:'.gray}  ${n.bold} `;
     if (1 < _.size(short)) {
-      h += "" + '['.gray + 'options'.bold.gray + ']'.gray + " ";
+      h += `${'['.gray}${'options'.bold.gray}${']'.gray} `;
     }
-    h += "" + '['.gray + p.bold.yellow + (l && ' ... ]'.gray || ']'.gray);
+    h += `${'['.gray}${p.bold.yellow}${l && ' ... ]'.gray || ']'.gray}`;
     h += '\n';
     if ((ref1 = c[n][p]) != null ? ref1['?'] : void 0) {
-      h += ("\n" + (_.padEnd('        ' + p, maxKeyLength + 9)) + " " + c[n][p]['?'].gray).yellow.bold;
+      h += `\n${_.padEnd('        ' + p, maxKeyLength + 9)} ${c[n][p]['?'].gray}`.yellow.bold;
       if ((c[n][p]['='] != null) && !l) {
-        h += ("  " + (_.padEnd('', Math.max(0, maxHelpLength - c[n][p]['?'].strip.length))) + " " + c[n][p]['=']).magenta;
+        h += `  ${_.padEnd('', Math.max(0, maxHelpLength - c[n][p]['?'].strip.length))} ${c[n][p]['=']}`.magenta;
       }
       h += '\n';
     }
@@ -186,14 +178,13 @@
       });
       h += '\n';
     }
-
     /*
     00000000   00000000   0000000  000   000  000      000000000
     000   000  000       000       000   000  000         000   
     0000000    0000000   0000000   000   000  000         000   
     000   000  000            000  000   000  000         000   
-    000   000  00000000  0000000    0000000   0000000     000
-     */
+    000   000  00000000  0000000    0000000   0000000     000   
+    */
     while (a.length) {
       k = a.shift();
       if (k.substr(0, 2) === '--') {
