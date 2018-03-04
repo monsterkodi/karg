@@ -54,7 +54,8 @@ error = (msg) ->
 
 parse = (config, options={}) ->
     
-    a = expand process.argv.slice 2
+    options.ignoreArgs ?= 2
+    a = expand process.argv.slice options.ignoreArgs
     c = noon.parse config
     n = Object.keys(c)[0]
     r = {}
