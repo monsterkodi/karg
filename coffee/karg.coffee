@@ -6,10 +6,13 @@
 000   000  000   000  000   000   0000000 
 ###
 
-noon   = require 'noon'
-colors = require 'colors'
-_      = require 'lodash'
-log    = console.log
+noon    = require 'noon'
+colors  = require 'colors'
+isEmpty = require 'lodash.isempty'
+padEnd  = require 'lodash.padend'
+size    = require 'lodash.size'
+values  = require 'lodash.values'
+log     = console.log
 
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
@@ -110,8 +113,8 @@ parse = (config, options={}) ->
                 else r[k]
             oh += '\n'
             oh += "    #{'-'.gray}#{s}#{', --'.gray}#{k}"
-            oh += "    #{_.padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
-            oh += "    #{_.padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
+            oh += "    #{padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
+            oh += "    #{padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -122,12 +125,12 @@ parse = (config, options={}) ->
     ###
     
     h = "\n#{'usage:'.gray}  #{n.bold} "
-    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < _.size short
+    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < size short
     h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
     h += '\n'
     if c[n][p]?['?']
-        h += "\n#{_.padEnd '        '+p, maxKeyLength+9} #{c[n][p]['?'].gray}".yellow.bold
-        h += "  #{_.padEnd '', Math.max(0,maxHelpLength-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
+        h += "\n#{padEnd '        '+p, maxKeyLength+9} #{c[n][p]['?'].gray}".yellow.bold
+        h += "  #{padEnd '', Math.max(0,maxHelpLength-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
         h += '\n'
             
     if oh.length
@@ -143,7 +146,7 @@ parse = (config, options={}) ->
         short['V'] = 'version'
         
     delete c[n]
-    if not _.isEmpty c
+    if not isEmpty c
         h += noon.stringify c, 
             maxalign: 16
             colors: 
@@ -186,7 +189,7 @@ parse = (config, options={}) ->
             r[k] = not r[k]
         else if not isNaN parseInt r[k]
             r[k] = parseInt a.shift()
-        else if k in _.values short
+        else if k in values short
             r[k] = a.shift()
         else
             if l
