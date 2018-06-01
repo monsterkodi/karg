@@ -6,13 +6,14 @@
 000   000  000   000  000   000   0000000 
 ###
 
-noon    = require 'noon'
-colors  = require 'colors'
-isEmpty = require 'lodash.isempty'
-padEnd  = require 'lodash.padend'
-size    = require 'lodash.size'
-values  = require 'lodash.values'
-log     = console.log
+noon     = require 'noon'
+colors   = require 'colors'
+isEmpty  = require 'lodash.isempty'
+padEnd   = require 'lodash.padend'
+size     = require 'lodash.size'
+values   = require 'lodash.values'
+isString = require 'lodash.isstring'
+log      = console.log
 
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
@@ -59,7 +60,10 @@ parse = (config, options={}) ->
     
     options.ignoreArgs ?= 2
     a = expand process.argv.slice options.ignoreArgs
-    c = noon.parse config
+    if isString config
+        c = noon.parse config
+    else
+        c = config
     n = Object.keys(c)[0]
     r = {}
     p = ''
