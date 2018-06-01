@@ -13,8 +13,9 @@ is also an option parser with **meager features** but **simple setup** and **pre
 
 does just the bare minimum:
 
+- automatic help generation
 - short and long option names
-- list of unnamed arguments
+- unnamed arguments
 - boolean toggle
 - dictionary output
 
