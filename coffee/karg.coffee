@@ -63,14 +63,14 @@ parse = (config, options={}) ->
     if isString config
         config = noon.parse config
 
-    n = Object.keys(config)[0]
-    r = {}
-    p = ''
-    l = false
-    help = {}
-    short = {} # maps shortcut keys to long key names
+    name   = Object.keys(config)[0]
+    result = {}
+    help   = {}
+    short  = {} # maps shortcut keys to long key names
+    param  = ''
+    paramList = false
     
-    for k,v of config[n]
+    for k,v of config[name]
         
         if 0 <= k.indexOf ' '
             error """
@@ -79,15 +79,15 @@ parse = (config, options={}) ->
             """
             process.exit 1
         
-        if v['=']? then r[k] = v['=']
+        if v['=']? then result[k] = v['=']
         s = v['-']? and v['-'] or k[0]
         k = k.toLowerCase()
         if '*' in Object.keys v
-            p = k
+            param = k
         else if '**' in Object.keys v
-            p = k
-            l = true
-            r[p] = []
+            param = k
+            paramList = true
+            result[param] = []
         else
             short[s] = k
             help[s] = v['?']
@@ -100,7 +100,7 @@ parse = (config, options={}) ->
      0000000   000           000     000   0000000   000   000  0000000 
     ###
     
-    oh = ""
+    optionsText = ""
     
     maxKeyLength = 0
     maxHelpLength = 0
@@ -111,14 +111,14 @@ parse = (config, options={}) ->
             
     for s,k of short
         if help[s]?
-            df = switch r[k]
+            df = switch result[k]
                 when false then '✘'.red.dim
                 when true  then '✔'.green.bold
-                else r[k]
-            oh += '\n'
-            oh += "    #{'-'.gray}#{s}#{', --'.gray}#{k}"
-            oh += "    #{padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
-            oh += "    #{padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
+                else result[k]
+            optionsText += '\n'
+            optionsText += "    #{'-'.gray}#{s}#{', --'.gray}#{k}"
+            optionsText += "    #{padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
+            optionsText += "    #{padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -128,19 +128,19 @@ parse = (config, options={}) ->
     000   000  00000000  0000000  000      
     ###
     
-    h = "\n#{'usage:'.gray}  #{n.bold} "
-    h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < size short
-    h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
-    h += '\n'
-    if config[n][p]?['?']
-        h += "\n#{padEnd '        '+p, maxKeyLength+9} #{config[n][p]['?'].gray}".yellow.bold
-        h += "  #{padEnd '', Math.max(0,maxHelpLength-config[n][p]['?'].strip.length)} #{config[n][p]['=']}".magenta if config[n][p]['=']? and not l
-        h += '\n'
+    helpText  = "\n#{'usage:'.gray}  #{n.bold} "
+    helpText += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < size short
+    helpText += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
+    helpText += '\n'
+    if config[name][param]?['?']
+        helpText += "\n#{padEnd '        '+p, maxKeyLength+9} #{config[name][param]['?'].gray}".yellow.bold
+        helpText += "  #{padEnd '', Math.max(0,maxHelpLength-config[name][param]['?'].strip.length)} #{config[name][param]['=']}".magenta if config[name][param]['=']? and not l
+        helpText += '\n'
             
-    if oh.length
-        h += "\noptions:\n".gray
-        h += oh
-        h += '\n\n'
+    if optionsText.length
+        helpText += "\noptions:\n".gray
+        helpText += optionsText
+        helpText += '\n\n'
     
     short['h'] = 'help'
     
@@ -149,14 +149,14 @@ parse = (config, options={}) ->
         delete config.version
         short['V'] = 'version'
         
-    delete config[n]
+    delete config[name]
     if not isEmpty config
-        h += noon.stringify config, 
+        helpText += noon.stringify config, 
             maxalign: 16
             colors: 
                 key:     colors.gray
                 string:  colors.white
-        h += '\n'
+        helpText += '\n'
         
     ###
     00000000   00000000   0000000  000   000  000      000000000
@@ -174,14 +174,14 @@ parse = (config, options={}) ->
         else if k[0] == '-'
             k = short[k.substr 1]
         else 
-            if l
-                r[p].push k
+            if paramList
+                result[param].push k
             else
-                r[p] = k
+                result[param] = k
             continue
             
         if k == 'help'
-            log h
+            log helpText
             return if options.dontExit
             process.exit()
         else if k == 'version' and version?
@@ -189,17 +189,17 @@ parse = (config, options={}) ->
             return if options.dontExit
             process.exit()
             
-        if r[k] == false or r[k] == true
-            r[k] = not r[k]
-        else if not isNaN parseInt r[k]
-            r[k] = parseInt a.shift()
+        if result[k] == false or result[k] == true
+            result[k] = not result[k]
+        else if not isNaN parseInt result[k]
+            result[k] = parseInt a.shift()
         else if k in values short
-            r[k] = a.shift()
+            result[k] = a.shift()
         else
-            if l
-                r[p].push k
+            if paramList
+                result[param].push k
             else
-                r[p] = k
-    r
+                result[param] = k
+    result
 
 module.exports = parse
