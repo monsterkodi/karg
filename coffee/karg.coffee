@@ -6,6 +6,7 @@
 000   000  000   000  000   000   0000000 
 ###
 
+log      = console.log
 noon     = require 'noon'
 colors   = require 'colors'
 isEmpty  = require 'lodash.isempty'
@@ -13,7 +14,6 @@ padEnd   = require 'lodash.padend'
 size     = require 'lodash.size'
 values   = require 'lodash.values'
 isString = require 'lodash.isstring'
-log      = console.log
 
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
@@ -61,17 +61,16 @@ parse = (config, options={}) ->
     options.ignoreArgs ?= 2
     a = expand process.argv.slice options.ignoreArgs
     if isString config
-        c = noon.parse config
-    else
-        c = config
-    n = Object.keys(c)[0]
+        config = noon.parse config
+
+    n = Object.keys(config)[0]
     r = {}
     p = ''
     l = false
     help = {}
     short = {} # maps shortcut keys to long key names
     
-    for k,v of c[n]
+    for k,v of config[n]
         
         if 0 <= k.indexOf ' '
             error """
@@ -82,6 +81,7 @@ parse = (config, options={}) ->
         
         if v['=']? then r[k] = v['=']
         s = v['-']? and v['-'] or k[0]
+        k = k.toLowerCase()
         if '*' in Object.keys v
             p = k
         else if '**' in Object.keys v
@@ -132,9 +132,9 @@ parse = (config, options={}) ->
     h += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < size short
     h += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
     h += '\n'
-    if c[n][p]?['?']
-        h += "\n#{padEnd '        '+p, maxKeyLength+9} #{c[n][p]['?'].gray}".yellow.bold
-        h += "  #{padEnd '', Math.max(0,maxHelpLength-c[n][p]['?'].strip.length)} #{c[n][p]['=']}".magenta if c[n][p]['=']? and not l
+    if config[n][p]?['?']
+        h += "\n#{padEnd '        '+p, maxKeyLength+9} #{config[n][p]['?'].gray}".yellow.bold
+        h += "  #{padEnd '', Math.max(0,maxHelpLength-config[n][p]['?'].strip.length)} #{config[n][p]['=']}".magenta if config[n][p]['=']? and not l
         h += '\n'
             
     if oh.length
@@ -144,14 +144,14 @@ parse = (config, options={}) ->
     
     short['h'] = 'help'
     
-    if c['version']?
-        version = c['version']
-        delete c['version']
+    if config.version?
+        version = config.version
+        delete config.version
         short['V'] = 'version'
         
-    delete c[n]
-    if not isEmpty c
-        h += noon.stringify c, 
+    delete config[n]
+    if not isEmpty config
+        h += noon.stringify config, 
             maxalign: 16
             colors: 
                 key:     colors.gray
