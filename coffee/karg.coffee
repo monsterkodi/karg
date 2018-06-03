@@ -65,7 +65,7 @@ parse = (config, options={}) ->
         config = clone config
 
     name   = Object.keys(config)[0] # the application/script name
-    result = {} # the object we are creating from the provided arguments and the configuration
+    result = {} # the object created from the provided arguments and the configuration
     help   = {} # maps shortcut keys to help texts
     short  = {} # maps shortcut keys to long key names
     param  = '' # name of non-option parameters

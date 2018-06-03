@@ -3,7 +3,7 @@ args = require('../') """
 
 simple
     additional  . ? unnamed argument  . * . = no name
-    anOption    . ? some description  . = default
+    an-option   . ? some description  . = default
     boolean     . ? -b to turn it on  . = false
     switch      . ? -s to turn it off . = true
     invisible                 . = hidden

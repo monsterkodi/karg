@@ -6,7 +6,7 @@ complex
     empty         . ? has no default
     string        . ? has string default  . = string
     int           . ? has integer default . = 6
-    changedAbbr   . ? has -C as abbr      . - C . = cool
+    changed-abbr  . ? has -C as abbr      . - C . = cool
     
 help
     some topic  some text  
