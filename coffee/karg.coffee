@@ -201,9 +201,9 @@ parse = (config, options={}) ->
         if result[arg] == false or result[arg] == true
             result[arg] = not result[arg]
         else if not isNaN parseInt result[arg]
-            result[arg] = parseInt a.shift()
+            result[arg] = parseInt expandedArgs.shift()
         else if arg in values short
-            result[arg] = a.shift()
+            result[arg] = expandedArgs.shift()
         else
             if paramList
                 result[param].push arg
