@@ -68,7 +68,7 @@ parse = (config, options={}) ->
     result = {} # the object we are creating from the provided arguments and the configuration
     help   = {} # maps shortcut keys to help texts
     short  = {} # maps shortcut keys to long key names
-    param  = ''
+    param  = '' # name of non-option parameters
     paramList = false
     
     for k,v of clone config[name]
@@ -123,7 +123,7 @@ parse = (config, options={}) ->
                 when true  then '✔'.green.bold
                 else result[lng]
             optionsText += '\n'
-            optionsText += "    #{'-'.gray}#{s}#{', --'.gray}#{lng}"
+            optionsText += "    #{'-'.gray}#{sht}#{', --'.gray}#{lng}"
             optionsText += "    #{padEnd '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}".gray.bold
             optionsText += "    #{padEnd '', Math.max(0,maxHelpLength-help[sht].strip.length)} #{df}".magenta if df?
 
@@ -135,13 +135,13 @@ parse = (config, options={}) ->
     000   000  00000000  0000000  000      
     ###
     
-    helpText  = "\n#{'usage:'.gray}  #{n.bold} "
+    helpText  = "\n#{'usage:'.gray}  #{name.bold} "
     helpText += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < size short
-    helpText += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
+    helpText += "#{'['.gray}#{param.bold.yellow}#{paramList and (' ... ]'.gray) or (']'.gray)}"
     helpText += '\n'
     if config[name][param]?['?']
-        helpText += "\n#{padEnd '        '+p, maxArgLength+9} #{config[name][param]['?'].gray}".yellow.bold
-        helpText += "  #{padEnd '', Math.max(0,maxHelpLength-config[name][param]['?'].strip.length)} #{config[name][param]['=']}".magenta if config[name][param]['=']? and not l
+        helpText += "\n#{padEnd '        '+param, maxArgLength+9} #{config[name][param]['?'].gray}".yellow.bold
+        helpText += "  #{padEnd '', Math.max(0,maxHelpLength-config[name][param]['?'].strip.length)} #{config[name][param]['=']}".magenta if config[name][param]['=']? and not paramList
         helpText += '\n'
             
     if optionsText.length
