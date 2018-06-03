@@ -14,6 +14,7 @@ padEnd   = require 'lodash.padend'
 size     = require 'lodash.size'
 values   = require 'lodash.values'
 isString = require 'lodash.isstring'
+clone    = require 'lodash.clone'
 
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
@@ -58,19 +59,19 @@ error = (msg) ->
 
 parse = (config, options={}) ->
     
-    options.ignoreArgs ?= 2
-    a = expand process.argv.slice options.ignoreArgs
     if isString config
         config = noon.parse config
+    else
+        config = clone config
 
-    name   = Object.keys(config)[0]
-    result = {}
-    help   = {}
+    name   = Object.keys(config)[0] # the application/script name
+    result = {} # the object we are creating from the provided arguments and the configuration
+    help   = {} # maps shortcut keys to help texts
     short  = {} # maps shortcut keys to long key names
     param  = ''
     paramList = false
     
-    for k,v of config[name]
+    for k,v of clone config[name]
         
         if 0 <= k.indexOf ' '
             error """
@@ -80,8 +81,14 @@ parse = (config, options={}) ->
             process.exit 1
         
         if v['=']? then result[k] = v['=']
-        s = v['-']? and v['-'] or k[0]
-        k = k.toLowerCase()
+        
+        sht = v['-']? and v['-'] or k[0]
+        
+        if k != k.toLowerCase()
+            delete config[name][k]
+            k = k.toLowerCase()
+            config[name][k] = v
+            
         if '*' in Object.keys v
             param = k
         else if '**' in Object.keys v
@@ -89,8 +96,8 @@ parse = (config, options={}) ->
             paramList = true
             result[param] = []
         else
-            short[s] = k
-            help[s] = v['?']
+            short[sht] = k
+            help[sht] = v['?']
 
     ###
      0000000   00000000   000000000  000   0000000   000   000   0000000
@@ -102,23 +109,23 @@ parse = (config, options={}) ->
     
     optionsText = ""
     
-    maxKeyLength = 0
+    maxArgLength = 0
     maxHelpLength = 0
-    for s,k of short
-        if help[s]?
-            maxKeyLength = Math.max(maxKeyLength, s.length+k.length)
-            maxHelpLength = Math.max(maxHelpLength, help[s].strip.length)
+    for sht,lng of short
+        if help[sht]?
+            maxArgLength  = Math.max(maxArgLength, sht.length+lng.length)
+            maxHelpLength = Math.max(maxHelpLength, help[sht].strip.length)
             
-    for s,k of short
-        if help[s]?
-            df = switch result[k]
+    for sht,lng of short
+        if help[sht]?
+            df = switch result[lng]
                 when false then '✘'.red.dim
                 when true  then '✔'.green.bold
-                else result[k]
+                else result[lng]
             optionsText += '\n'
-            optionsText += "    #{'-'.gray}#{s}#{', --'.gray}#{k}"
-            optionsText += "    #{padEnd '', Math.max(0,maxKeyLength-s.length-k.length)} #{help[s]}".gray.bold
-            optionsText += "    #{padEnd '', Math.max(0,maxHelpLength-help[s].strip.length)} #{df}".magenta if df?
+            optionsText += "    #{'-'.gray}#{s}#{', --'.gray}#{lng}"
+            optionsText += "    #{padEnd '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}".gray.bold
+            optionsText += "    #{padEnd '', Math.max(0,maxHelpLength-help[sht].strip.length)} #{df}".magenta if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -133,7 +140,7 @@ parse = (config, options={}) ->
     helpText += "#{'['.gray}#{p.bold.yellow}#{l and (' ... ]'.gray) or (']'.gray)}"
     helpText += '\n'
     if config[name][param]?['?']
-        helpText += "\n#{padEnd '        '+p, maxKeyLength+9} #{config[name][param]['?'].gray}".yellow.bold
+        helpText += "\n#{padEnd '        '+p, maxArgLength+9} #{config[name][param]['?'].gray}".yellow.bold
         helpText += "  #{padEnd '', Math.max(0,maxHelpLength-config[name][param]['?'].strip.length)} #{config[name][param]['=']}".magenta if config[name][param]['=']? and not l
         helpText += '\n'
             
@@ -165,41 +172,43 @@ parse = (config, options={}) ->
     000   000  000            000  000   000  000         000   
     000   000  00000000  0000000    0000000   0000000     000   
     ###
-        
-    while a.length
-        k = a.shift()
+
+    options.ignoreArgs ?= 2
+    expandedArgs = expand process.argv.slice options.ignoreArgs
+    
+    while arg = expandedArgs.shift()
             
-        if k.substr(0,2) == '--'
-            k = k.substr 2
-        else if k[0] == '-'
-            k = short[k.substr 1]
+        if arg.substr(0,2) == '--'
+            arg = arg.substr 2
+        else if arg[0] == '-'
+            arg = short[arg.substr 1]
         else 
             if paramList
-                result[param].push k
+                result[param].push arg
             else
-                result[param] = k
+                result[param] = arg
             continue
             
-        if k == 'help'
+        if arg == 'help'
             log helpText
             return if options.dontExit
             process.exit()
-        else if k == 'version' and version?
+        else if arg == 'version' and version?
             log version
             return if options.dontExit
             process.exit()
             
-        if result[k] == false or result[k] == true
-            result[k] = not result[k]
-        else if not isNaN parseInt result[k]
-            result[k] = parseInt a.shift()
-        else if k in values short
-            result[k] = a.shift()
+        if result[arg] == false or result[arg] == true
+            result[arg] = not result[arg]
+        else if not isNaN parseInt result[arg]
+            result[arg] = parseInt a.shift()
+        else if arg in values short
+            result[arg] = a.shift()
         else
             if paramList
-                result[param].push k
+                result[param].push arg
             else
-                result[param] = k
+                result[param] = arg
     result
 
 module.exports = parse
