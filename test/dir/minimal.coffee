@@ -1,7 +1,8 @@
-args = require('../') """
+
+args = require('../../') """
 
 minimal
-    file  . * . ? arg help
+    file  . * .
     
 """
 

@@ -1,11 +1,12 @@
 
-args = require('../') """
+args = require('../../') """
 
 complex
     additional    . ? unnamed arguments   . **
     empty         . ? has no default
     string        . ? has string default  . = string
     int           . ? has integer default . = 6
+    float         . ? has float default   . = 1.23
     changed-abbr  . ? has -C as abbr      . - C . = cool
     
 help

@@ -55,7 +55,10 @@ error = (msg) ->
 ###
 
 # options: 
+#     ignoreArgs:  number of leading process.argv items to ignore (default=2)
+#     argv:        list of string arguments to use instead of process.argv
 #     dontExit:    don't exit process on -V/--version or -h/--help  (returns undefined instead)
+#     returnLog:   help/version output is returned instead of logged (implies dontExit)
 
 parse = (config, options={}) ->
     
@@ -71,7 +74,7 @@ parse = (config, options={}) ->
     param  = '' # name of non-option parameters
     paramList = false
     
-    for k,v of clone config[name]
+    for k,v of config[name]
         
         if 0 <= k.indexOf ' '
             error """
@@ -84,20 +87,25 @@ parse = (config, options={}) ->
         
         sht = v['-']? and v['-'] or k[0]
         
-        if k != k.toLowerCase()
-            delete config[name][k]
-            k = k.toLowerCase()
-            config[name][k] = v
-            
-        if '*' in Object.keys v
-            param = k
-        else if '**' in Object.keys v
-            param = k
-            paramList = true
-            result[param] = []
+        if Array.isArray v
+            if '*' in v
+                param = k
+            else if '**' in v
+                param = k
+                paramList = true
+                result[param] = []
+            else
+                short[sht] = k
         else
-            short[sht] = k
-            help[sht] = v['?']
+            if '*' in Object.keys v
+                param = k
+            else if '**' in Object.keys v
+                param = k
+                paramList = true
+                result[param] = []
+            else
+                short[sht] = k
+                help[sht] = v['?']
 
     ###
      0000000   00000000   000000000  000   0000000   000   000   0000000
@@ -149,12 +157,12 @@ parse = (config, options={}) ->
         helpText += optionsText
         helpText += '\n\n'
     
-    short['h'] = 'help'
+    short['h'] ?= 'help'
     
     if config.version?
         version = config.version
         delete config.version
-        short['V'] = 'version'
+        short['V'] ?= 'version'
         
     delete config[name]
     if not isEmpty config
@@ -174,41 +182,62 @@ parse = (config, options={}) ->
     ###
 
     options.ignoreArgs ?= 2
-    expandedArgs = expand process.argv.slice options.ignoreArgs
+    
+    if options.argv
+        argv = options.argv
+    else
+        argv = process.argv.slice options.ignoreArgs
+        
+    expandedArgs = expand argv
+
+    addParam = (arg) ->
+        if paramList
+            result[param].push arg
+        else
+            result[param] = arg
+            
+    addIgnored = (arg) ->
+        if not result['__ignored'] then result['__ignored'] = []
+        result['__ignored'].push arg
+        
+    addParamOrIgnore = (arg) ->
+        if param
+            addParam arg
+        else
+            addIgnored arg
     
     while arg = expandedArgs.shift()
             
         if arg.substr(0,2) == '--'
             arg = arg.substr 2
         else if arg[0] == '-'
+            if not short[arg.substr 1]
+                addIgnored arg
+                continue
             arg = short[arg.substr 1]
         else 
-            if paramList
-                result[param].push arg
-            else
-                result[param] = arg
+            addParamOrIgnore arg
             continue
             
         if arg == 'help'
+            if options.returnLog then return helpText
             log helpText
             return if options.dontExit
             process.exit()
         else if arg == 'version' and version?
+            if options.returnLog then return version
             log version
             return if options.dontExit
             process.exit()
             
         if result[arg] == false or result[arg] == true
             result[arg] = not result[arg]
-        else if not isNaN parseInt result[arg]
-            result[arg] = parseInt expandedArgs.shift()
+        else if not isNaN parseFloat result[arg]
+            result[arg] = parseFloat expandedArgs.shift()
         else if arg in values short
             result[arg] = expandedArgs.shift()
         else
-            if paramList
-                result[param].push arg
-            else
-                result[param] = arg
+            addParamOrIgnore arg
     result
 
 module.exports = parse

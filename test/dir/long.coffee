@@ -1,5 +1,5 @@
 
-args = require('../') """
+args = require('../../') """
 
 long
     very-long-key-name  . ? some very long description text which doesn't make much sense. . * . = and some default

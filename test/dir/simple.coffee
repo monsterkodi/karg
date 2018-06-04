@@ -1,5 +1,5 @@
 
-args = require('../') """
+args = require('../../') """
 
 simple
     additional  . ? unnamed argument  . * . = no name
