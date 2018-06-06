@@ -1,6 +1,6 @@
 {
   "name": "karg",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "option parser",
   "main": "js/karg.js",
   "keywords": [
@@ -24,10 +24,10 @@
     "lodash.padend": "^4.6.1",
     "lodash.size": "^4.2.0",
     "lodash.values": "^4.3.0",
-    "noon": ">=1.3.0"
+    "noon": ">=1.4.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^5.0.1"
+    "mocha": "^5.2.0"
   }
 }
