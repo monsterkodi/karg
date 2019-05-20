@@ -27,10 +27,10 @@
     "lodash.padend": "^4.6.1",
     "lodash.size": "^4.2.0",
     "lodash.values": "^4.3.0",
-    "noon": ">=2.0.2"
+    "noon": ">=2.3.0"
   },
   "devDependencies": {
-    "koffee": "^0.30.0",
+    "koffee": "^0.43.0",
     "chai": "^4.2.0",
     "mocha": "^6.1.4"
   }
