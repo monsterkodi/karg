@@ -6,9 +6,6 @@
 000   000  000   000  000   000   0000000 
 ###
 
-log      = console.log
-noon     = require 'noon'
-colors   = require 'colors'
 isEmpty  = require 'lodash.isempty'
 padEnd   = require 'lodash.padend'
 size     = require 'lodash.size'
@@ -63,6 +60,7 @@ error = (msg) ->
 parse = (config, options={}) ->
     
     if isString config
+        noon   = require 'noon'
         config = noon.parse config
     else
         config = clone config
@@ -164,6 +162,8 @@ parse = (config, options={}) ->
         delete config.version
         short['V'] ?= 'version'
         
+    colors = require 'colors'
+    
     delete config[name]
     if not isEmpty config
         helpText += noon.stringify config, 
