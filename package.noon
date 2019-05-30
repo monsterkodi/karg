@@ -1,5 +1,5 @@
 name            karg
-version         1.12.0
+version         1.13.0
 description     option parser
 main            js/karg.js
 keywords
@@ -24,6 +24,6 @@ dependencies
                 lodash.values   ^4.3.0
                 noon            >=2.4.0
 devDependencies
-                koffee  ^0.52.0
+                koffee  ^0.56.0
                 chai    ^4.2.0
                 mocha   ^6.1.4

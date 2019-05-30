@@ -64,6 +64,8 @@ parse = (config, options={}) ->
         config = noon.parse config
     else
         config = clone config
+        
+    colors = require 'colors'
 
     name   = Object.keys(config)[0] # the application/script name
     result = {} # the object created from the provided arguments and the configuration
@@ -120,7 +122,7 @@ parse = (config, options={}) ->
     for sht,lng of short
         if help[sht]?
             maxArgLength  = Math.max(maxArgLength, sht.length+lng.length)
-            maxHelpLength = Math.max(maxHelpLength, help[sht].strip.length)
+            maxHelpLength = Math.max(maxHelpLength, colors.strip(help[sht]).length)
             
     for sht,lng of short
         if help[sht]?
@@ -131,7 +133,7 @@ parse = (config, options={}) ->
             optionsText += '\n'
             optionsText += "    #{'-'.gray}#{sht}#{', --'.gray}#{lng}"
             optionsText += "    #{padEnd '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}".gray.bold
-            optionsText += "    #{padEnd '', Math.max(0,maxHelpLength-help[sht].strip.length)} #{df}".magenta if df?
+            optionsText += "    #{padEnd '', Math.max(0,maxHelpLength-colors.strip(help[sht]).length)} #{df}".magenta if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -147,7 +149,7 @@ parse = (config, options={}) ->
     helpText += '\n'
     if config[name][param]?['?']
         helpText += "\n#{padEnd '        '+param, maxArgLength+9} #{config[name][param]['?'].gray}".yellow.bold
-        helpText += "  #{padEnd '', Math.max(0,maxHelpLength-config[name][param]['?'].strip.length)} #{config[name][param]['=']}".magenta if config[name][param]['=']? and not paramList
+        helpText += "  #{padEnd '', Math.max(0,maxHelpLength-colors.strip(config[name][param]['?']).length)} #{config[name][param]['=']}".magenta if config[name][param]['=']? and not paramList
         helpText += '\n'
             
     if optionsText.length
