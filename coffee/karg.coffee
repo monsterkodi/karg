@@ -61,8 +61,8 @@ error = (msg) ->
 parse = (config, options={}) ->
     
     if isString config
-        noon   = require 'noon'
-        config = noon.parse config
+        noon_parse = require 'noon/js/parse'
+        config = noon_parse config
     else
         config = clone config
             
@@ -165,7 +165,8 @@ parse = (config, options={}) ->
         
     delete config[name]
     if not isEmpty config
-        helpText += noon.stringify config, 
+        noon_stringify = require 'noon/js/stringify'
+        helpText += noon_stringify config, 
             maxalign: 16
             colors: 
                 key:     gray
