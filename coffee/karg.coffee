@@ -12,7 +12,8 @@ size     = require 'lodash.size'
 values   = require 'lodash.values'
 isString = require 'lodash.isstring'
 clone    = require 'lodash.clone'
-
+require('klor').kolor.globalize()
+    
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
 000        000 000   000   000  000   000  0000  000  000   000
@@ -39,8 +40,8 @@ expand = (l) ->
 ###
 
 error = (msg) ->
-    s = "[".dim.red + "ERROR".bold.dim.red + "] ".dim.red 
-    s += msg.trim().split('\n').join("\n        ").red
+    s = dim red "[" + bold("ERROR") + "] "
+    s += red msg.trim().split('\n').join("\n        ")
     log s
 
 ###
@@ -64,9 +65,7 @@ parse = (config, options={}) ->
         config = noon.parse config
     else
         config = clone config
-        
-    colors = require 'colors'
-
+            
     name   = Object.keys(config)[0] # the application/script name
     result = {} # the object created from the provided arguments and the configuration
     help   = {} # maps shortcut keys to help texts
@@ -78,8 +77,8 @@ parse = (config, options={}) ->
         
         if 0 <= k.indexOf ' '
             error """
-            wrong karg setup: #{"keys can't contain spaces!".bold}
-            broken key: #{k.bold.yellow}
+            wrong karg setup: #{bold "keys can't contain spaces!"}
+            broken key: #{bold yellow k}
             """
             process.exit 1
         
@@ -116,24 +115,24 @@ parse = (config, options={}) ->
     ###
     
     optionsText = ""
-    
+        
     maxArgLength = 0
     maxHelpLength = 0
     for sht,lng of short
         if help[sht]?
             maxArgLength  = Math.max(maxArgLength, sht.length+lng.length)
-            maxHelpLength = Math.max(maxHelpLength, colors.strip(help[sht]).length)
+            maxHelpLength = Math.max(maxHelpLength, strip(help[sht]).length)
             
     for sht,lng of short
         if help[sht]?
             df = switch result[lng]
-                when false then '✘'.red.dim
-                when true  then '✔'.green.bold
+                when false then red dim '✘'
+                when true  then green bold '✔'
                 else result[lng]
             optionsText += '\n'
-            optionsText += "    #{'-'.gray}#{sht}#{', --'.gray}#{lng}"
-            optionsText += "    #{padEnd '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}".gray.bold
-            optionsText += "    #{padEnd '', Math.max(0,maxHelpLength-colors.strip(help[sht]).length)} #{df}".magenta if df?
+            optionsText += "    #{gray '-'}#{sht}#{gray ', --'}#{lng}"
+            optionsText += gray bold "    #{padEnd '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}"
+            optionsText += magenta "    #{padEnd '', Math.max(0,maxHelpLength-strip(help[sht]).length)} #{df}" if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -143,17 +142,17 @@ parse = (config, options={}) ->
     000   000  00000000  0000000  000      
     ###
     
-    helpText  = "\n#{'usage:'.gray}  #{name.bold} "
-    helpText += "#{'['.gray}#{'options'.bold.gray}#{']'.gray} " if 1 < size short
-    helpText += "#{'['.gray}#{param.bold.yellow}#{paramList and (' ... ]'.gray) or (']'.gray)}"
+    helpText  = "\n#{gray 'usage:'}  #{bold name} "
+    helpText += "#{gray '['}#{bold gray 'options'}#{gray ']'} " if 1 < size short
+    helpText += "#{gray '['}#{bold yellow param}#{paramList and gray(' ... ]') or gray(']')}"
     helpText += '\n'
     if config[name][param]?['?']
-        helpText += "\n#{padEnd '        '+param, maxArgLength+9} #{config[name][param]['?'].gray}".yellow.bold
-        helpText += "  #{padEnd '', Math.max(0,maxHelpLength-colors.strip(config[name][param]['?']).length)} #{config[name][param]['=']}".magenta if config[name][param]['=']? and not paramList
+        helpText += yellow bold "\n#{padEnd '        '+param, maxArgLength+9} #{gray config[name][param]['?']}"
+        helpText += magenta("  #{padEnd '', Math.max(0,maxHelpLength-strip(config[name][param]['?']).length)} #{config[name][param]['=']}") if config[name][param]['=']? and not paramList
         helpText += '\n'
             
     if optionsText.length
-        helpText += "\noptions:\n".gray
+        helpText += gray "\noptions:\n"
         helpText += optionsText
         helpText += '\n\n'
     
@@ -164,15 +163,13 @@ parse = (config, options={}) ->
         delete config.version
         short['V'] ?= 'version'
         
-    colors = require 'colors'
-    
     delete config[name]
     if not isEmpty config
         helpText += noon.stringify config, 
             maxalign: 16
             colors: 
-                key:     colors.gray
-                string:  colors.white
+                key:     gray
+                string:  white
         helpText += '\n'
         
     ###

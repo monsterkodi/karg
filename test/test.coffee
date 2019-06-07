@@ -7,6 +7,7 @@ chai.should()
 
 process.argv = process.argv.concat ['--no-colors']
 karg = require '../coffee/karg' 
+require('klor').kolor.globalize()
 
 describe 'config', ->
 
@@ -279,13 +280,13 @@ describe 'config', ->
     
     it 'help', ->
         
-        expect karg """
+        expect strip karg """
             test
                 arg  . = false
         """, argv:['-h'], returnLog:true
         .to.include 'usage:  test'
                             
-        expect karg """
+        expect strip karg """
             test
                 arg  . = false
         """, argv:['--help'], returnLog:true
