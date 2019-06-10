@@ -1,6 +1,6 @@
 {
   "name": "karg",
-  "version": "1.18.1",
+  "version": "1.19.0",
   "description": "option parser",
   "main": "js/karg.js",
   "files": [
@@ -23,19 +23,19 @@
     "test": "./node_modules/.bin/mocha -c --require koffee/js/register ./test/test.coffee"
   },
   "dependencies": {
-    "klor": ">=0.63.0",
+    "klor": "^1.0.1",
     "lodash.clone": "^4.5.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isstring": "^4.0.1",
     "lodash.padend": "^4.6.1",
     "lodash.size": "^4.2.0",
     "lodash.values": "^4.3.0",
-    "noon": ">=2.12.1"
+    "noon": "^2.13.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
-    "koffee": ">=0.56.0",
-    "konrad": ">=0.130.0"
+    "koffee": "^1.0.0",
+    "konrad": "^0.130.0"
   }
 }
