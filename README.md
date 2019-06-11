@@ -56,4 +56,4 @@ version       1.0.0
 [david-image]:https://david-dm.org/monsterkodi/karg/status.svg
 [david-url]:https://david-dm.org/monsterkodi/karg
 [downloads-image]:https://img.shields.io/npm/dm/karg.svg
-[downloads-url]:http://npmjs.org/package/karg
+[downloads-url]:https://www.npmtrends.com/karg
