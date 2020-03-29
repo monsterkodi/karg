@@ -6,12 +6,6 @@
 000   000  000   000  000   000   0000000 
 ###
 
-isEmpty  = require 'lodash.isempty'
-padEnd   = require 'lodash.padend'
-size     = require 'lodash.size'
-values   = require 'lodash.values'
-isString = require 'lodash.isstring'
-clone    = require 'lodash.clone'
 require('klor').kolor.globalize()
     
 ###
@@ -60,11 +54,16 @@ error = (msg) ->
 
 parse = (config, options={}) ->
     
-    if isString config
+    pad = (s, l) ->
+        s = String s
+        while s.length < l then s += ' '
+        s
+    
+    if typeof(config) == 'string'
         noon_parse = require 'noon/js/parse'
         config = noon_parse config
     else
-        config = clone config
+        config = Object.assign {}, config
             
     name   = Object.keys(config)[0] # the application/script name
     result = {} # the object created from the provided arguments and the configuration
@@ -131,8 +130,8 @@ parse = (config, options={}) ->
                 else result[lng]
             optionsText += '\n'
             optionsText += "    #{gray '-'}#{sht}#{gray ', --'}#{lng}"
-            optionsText += gray bold "    #{padEnd '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}"
-            optionsText += magenta "    #{padEnd '', Math.max(0,maxHelpLength-strip(help[sht]).length)} #{df}" if df?
+            optionsText += gray bold "    #{pad '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}"
+            optionsText += magenta "    #{pad '', Math.max(0,maxHelpLength-strip(help[sht]).length)} #{df}" if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -143,12 +142,12 @@ parse = (config, options={}) ->
     ###
     
     helpText  = "\n#{gray 'usage:'}  #{bold name} "
-    helpText += "#{gray '['}#{bold gray 'options'}#{gray ']'} " if 1 < size short
+    helpText += "#{gray '['}#{bold gray 'options'}#{gray ']'} " if 1 < Object.keys(short)
     helpText += "#{gray '['}#{bold yellow param}#{paramList and gray(' ... ]') or gray(']')}"
     helpText += '\n'
     if config[name][param]?['?']
-        helpText += yellow bold "\n#{padEnd '        '+param, maxArgLength+9} #{gray config[name][param]['?']}"
-        helpText += magenta("  #{padEnd '', Math.max(0,maxHelpLength-strip(config[name][param]['?']).length)} #{config[name][param]['=']}") if config[name][param]['=']? and not paramList
+        helpText += yellow bold "\n#{pad '        '+param, maxArgLength+9} #{gray config[name][param]['?']}"
+        helpText += magenta("  #{pad '', Math.max(0,maxHelpLength-strip(config[name][param]['?']).length)} #{config[name][param]['=']}") if config[name][param]['=']? and not paramList
         helpText += '\n'
             
     if optionsText.length
@@ -164,7 +163,7 @@ parse = (config, options={}) ->
         short['V'] ?= 'version'
         
     delete config[name]
-    if not isEmpty config
+    if Object.keys(config).length 
         noon_stringify = require 'noon/js/stringify'
         helpText += noon_stringify config, 
             maxalign: 16
@@ -234,7 +233,7 @@ parse = (config, options={}) ->
             result[arg] = not result[arg]
         else if not isNaN parseFloat result[arg]
             result[arg] = parseFloat expandedArgs.shift()
-        else if arg in values short
+        else if arg in Object.keys(short).map((k) -> short[k])
             result[arg] = expandedArgs.shift()
         else
             addParamOrIgnore arg
