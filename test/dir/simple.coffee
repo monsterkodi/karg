@@ -2,13 +2,13 @@
 args = require('../../') """
 
 simple
-    additional  . ? unnamed argument  . * . = no name
+    additional  . ? unnamed arguments . **
     an-option   . ? some description  . = default
     boolean     . ? -b to turn it on  . = false
     switch      . ? -s to turn it off . = true
-    invisible                 . = hidden
+    invisible                         . = hidden
     
-additional help topic
+help
     some help
     
 version       1.0.0

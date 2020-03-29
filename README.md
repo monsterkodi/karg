@@ -26,12 +26,12 @@ args = require('karg') """
 
 scriptname
     additional  . ? unnamed arguments . **
-    anOption    . ? some description  . = default
+    an-option   . ? some description  . = default
     boolean     . ? -b to turn it on  . = false
     switch      . ? -s to turn it off . = true
     invisible                         . = hidden
     
-additional help topic
+help
     some help
     
 version       1.0.0

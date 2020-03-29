@@ -1,13 +1,11 @@
-(function() {
-  var args;
+// koffee 1.12.0
+var args;
 
-  args = require('../../')("\nsimple\n    additional  . ? unnamed argument  . * . = no name\n    an-option   . ? some description  . = default\n    boolean     . ? -b to turn it on  . = false\n    switch      . ? -s to turn it off . = true\n    invisible                 . = hidden\n    \nadditional help topic\n    some help\n    \nversion       1.0.0\n");
+args = require('../../')("\nsimple\n    additional  . ? unnamed arguments . **\n    an-option   . ? some description  . = default\n    boolean     . ? -b to turn it on  . = false\n    switch      . ? -s to turn it off . = true\n    invisible                         . = hidden\n    \nhelp\n    some help\n    \nversion       1.0.0\n");
 
-  console.log(require('noon').stringify(args, {
+console.log(require('noon').stringify(args, {
     colors: true
-  }));
+}));
 
-}).call(this);
-
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2ltcGxlLmpzIiwic291cmNlUm9vdCI6Ii4uL3NpbXBsZS5jb2ZmZSIsInNvdXJjZXMiOlsic2ltcGxlLmNvZmZlZSJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDQTtBQUFBLE1BQUE7O0VBQUEsSUFBQSxHQUFPLE9BQUEsQ0FBUSxRQUFSLENBQUEsQ0FBa0Isd1VBQWxCOztFQWdCUCxPQUFPLENBQUMsR0FBUixDQUFZLE9BQUEsQ0FBUSxNQUFSLENBQWUsQ0FBQyxTQUFoQixDQUEwQixJQUExQixFQUFnQztJQUFBLE1BQUEsRUFBTztFQUFQLENBQWhDLENBQVo7QUFoQkEiLCJzb3VyY2VzQ29udGVudCI6WyJcbmFyZ3MgPSByZXF1aXJlKCcuLi8uLi8nKSBcIlwiXCJcblxuc2ltcGxlXG4gICAgYWRkaXRpb25hbCAgLiA/IHVubmFtZWQgYXJndW1lbnQgIC4gKiAuID0gbm8gbmFtZVxuICAgIGFuLW9wdGlvbiAgIC4gPyBzb21lIGRlc2NyaXB0aW9uICAuID0gZGVmYXVsdFxuICAgIGJvb2xlYW4gICAgIC4gPyAtYiB0byB0dXJuIGl0IG9uICAuID0gZmFsc2VcbiAgICBzd2l0Y2ggICAgICAuID8gLXMgdG8gdHVybiBpdCBvZmYgLiA9IHRydWVcbiAgICBpbnZpc2libGUgICAgICAgICAgICAgICAgIC4gPSBoaWRkZW5cbiAgICBcbmFkZGl0aW9uYWwgaGVscCB0b3BpY1xuICAgIHNvbWUgaGVscFxuICAgIFxudmVyc2lvbiAgICAgICAxLjAuMFxuXG5cIlwiXCJcblxuY29uc29sZS5sb2cgcmVxdWlyZSgnbm9vbicpLnN0cmluZ2lmeSBhcmdzLCBjb2xvcnM6dHJ1ZVxuIl19
-//# sourceURL=C:/Users/kodi/s/karg/test/dir/simple.coffee
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2ltcGxlLmpzIiwic291cmNlUm9vdCI6Ii4iLCJzb3VyY2VzIjpbInNpbXBsZS5jb2ZmZWUiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUNBLElBQUE7O0FBQUEsSUFBQSxHQUFPLE9BQUEsQ0FBUSxRQUFSLENBQUEsQ0FBa0Isb1RBQWxCOztBQWdCUCxPQUFPLENBQUMsR0FBUixDQUFZLE9BQUEsQ0FBUSxNQUFSLENBQWUsQ0FBQyxTQUFoQixDQUEwQixJQUExQixFQUFnQztJQUFBLE1BQUEsRUFBTyxJQUFQO0NBQWhDLENBQVoiLCJzb3VyY2VzQ29udGVudCI6WyJcbmFyZ3MgPSByZXF1aXJlKCcuLi8uLi8nKSBcIlwiXCJcblxuc2ltcGxlXG4gICAgYWRkaXRpb25hbCAgLiA/IHVubmFtZWQgYXJndW1lbnRzIC4gKipcbiAgICBhbi1vcHRpb24gICAuID8gc29tZSBkZXNjcmlwdGlvbiAgLiA9IGRlZmF1bHRcbiAgICBib29sZWFuICAgICAuID8gLWIgdG8gdHVybiBpdCBvbiAgLiA9IGZhbHNlXG4gICAgc3dpdGNoICAgICAgLiA/IC1zIHRvIHR1cm4gaXQgb2ZmIC4gPSB0cnVlXG4gICAgaW52aXNpYmxlICAgICAgICAgICAgICAgICAgICAgICAgIC4gPSBoaWRkZW5cbiAgICBcbmhlbHBcbiAgICBzb21lIGhlbHBcbiAgICBcbnZlcnNpb24gICAgICAgMS4wLjBcblxuXCJcIlwiXG5cbmNvbnNvbGUubG9nIHJlcXVpcmUoJ25vb24nKS5zdHJpbmdpZnkgYXJncywgY29sb3JzOnRydWVcbiJdfQ==
+//# sourceURL=simple.coffee
