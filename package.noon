@@ -15,10 +15,10 @@ bugs
 scripts
                 test  ./node_modules/.bin/mocha -c --require koffee/js/register ./test/test.coffee
 dependencies
-                klor  ^2.8.0
-                noon  ^3.0.0
+                klor  ^2.12.0
+                noon  ^3.0.3
 devDependencies
                 chai    ^4.2.0
-                mocha   ^7.1.1
+                mocha   ^8.2.1
                 koffee  ^1.12.0
                 konrad  ^0.180.0
