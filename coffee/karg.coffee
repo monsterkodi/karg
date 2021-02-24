@@ -231,7 +231,7 @@ parse = (config, options={}) ->
             
         if result[arg] == false or result[arg] == true
             result[arg] = not result[arg]
-        else if not isNaN parseFloat result[arg]
+        else if not isNaN Number result[arg]
             result[arg] = parseFloat expandedArgs.shift()
         else if arg in Object.keys(short).map((k) -> short[k])
             result[arg] = expandedArgs.shift()

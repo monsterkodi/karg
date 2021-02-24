@@ -84,7 +84,19 @@ describe 'config' ->
                 int  . = 123
         """ argv:'--int 777'.split ' '
         .to.eql int:777
-            
+
+        expect karg """
+            test
+                int  . = 123m
+        """ argv:'--int 777'.split ' '
+        .to.eql int:'777'
+
+        expect karg """
+            test
+                int  . = 123
+        """ argv:'--int 777s'.split ' '
+        .to.eql int:777
+        
     # 0000000     0000000    0000000   000      
     # 000   000  000   000  000   000  000      
     # 0000000    000   000  000   000  000      
