@@ -8,6 +8,7 @@ complex
     int           . ? has integer default . = 6
     float         . ? has float default   . = 1.23
     changed-abbr  . ? has -C as abbr      . - C . = cool
+    no-abbr       . ? has no abbr         . - - . = uncool
     
 help
     some topic  some text  

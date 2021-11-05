@@ -128,8 +128,9 @@ parse = (config, options={}) ->
                 when false then red dim '✘'
                 when true  then green bold '✔'
                 else result[lng]
+            shtHelp = if sht != '-' then "#{gray '-'}#{sht}" else '  '
             optionsText += '\n'
-            optionsText += "    #{gray '-'}#{sht}#{gray ', --'}#{lng}"
+            optionsText += "    #{shtHelp}#{gray '  --'}#{lng}"
             optionsText += gray bold "    #{pad '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}"
             optionsText += magenta "    #{pad '', Math.max(0,maxHelpLength-strip(help[sht]).length)} #{df}" if df?
 
