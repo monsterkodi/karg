@@ -67,8 +67,9 @@ parse = (config, options={}) ->
             
     name   = Object.keys(config)[0] # the application/script name
     result = {} # the object created from the provided arguments and the configuration
-    help   = {} # maps shortcut keys to help texts
-    short  = {} # maps shortcut keys to long key names
+    help   = {} # maps keys to help texts
+    short  = {} # maps keys to shortcut keys
+    long   = {} # maps shortcut keys to keys
     param  = '' # name of non-option parameters
     paramList = false
     
@@ -83,7 +84,9 @@ parse = (config, options={}) ->
         
         if v['=']? then result[k] = v['=']
         
-        sht = v['-']? and v['-'] or k[0]
+        sht = k[0]
+        if v['-'] then sht = v['-']
+        if sht == '-' then sht = ''
         
         if Array.isArray v
             if '*' in v
@@ -93,7 +96,8 @@ parse = (config, options={}) ->
                 paramList = true
                 result[param] = []
             else
-                short[sht] = k
+                short[k]  = sht
+                long[sht] = k if sht != ''
         else
             if '*' in Object.keys v
                 param = k
@@ -102,8 +106,9 @@ parse = (config, options={}) ->
                 paramList = true
                 result[param] = []
             else
-                short[sht] = k
-                help[sht] = v['?']
+                short[k]  = sht
+                long[sht] = k if sht != ''
+                help[k]   = v['?']
 
     ###
      0000000   00000000   000000000  000   0000000   000   000   0000000
@@ -117,22 +122,22 @@ parse = (config, options={}) ->
         
     maxArgLength = 0
     maxHelpLength = 0
-    for sht,lng of short
-        if help[sht]?
+    for lng,sht of short
+        if help[lng]?
             maxArgLength  = Math.max(maxArgLength, sht.length+lng.length)
-            maxHelpLength = Math.max(maxHelpLength, strip(help[sht]).length)
+            maxHelpLength = Math.max(maxHelpLength, strip(help[lng]).length)
             
-    for sht,lng of short
-        if help[sht]?
+    for lng,sht of short
+        if help[lng]?
             df = switch result[lng]
                 when false then red dim '✘'
                 when true  then green bold '✔'
                 else result[lng]
-            shtHelp = if sht != '-' then "#{gray '-'}#{sht}" else '  '
+            shtHelp = if sht != '' then "#{gray '-'}#{sht}" else '  '
             optionsText += '\n'
             optionsText += "    #{shtHelp}#{gray '  --'}#{lng}"
-            optionsText += gray bold "    #{pad '', Math.max(0,maxArgLength-sht.length-lng.length)} #{help[sht]}"
-            optionsText += magenta "    #{pad '', Math.max(0,maxHelpLength-strip(help[sht]).length)} #{df}" if df?
+            optionsText += gray bold "    #{pad '' Math.max(0,maxArgLength-sht.length-lng.length)} #{help[lng]}"
+            optionsText += magenta   "    #{pad '' Math.max(0,maxHelpLength-strip(help[lng]).length)} #{df}" if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -143,7 +148,7 @@ parse = (config, options={}) ->
     ###
     
     helpText  = "\n#{gray 'usage:'}  #{bold name} "
-    helpText += "#{gray '['}#{bold gray 'options'}#{gray ']'} " if 1 < Object.keys(short)
+    # helpText += "#{gray '['}#{bold gray 'options'}#{gray ']'} " if 1 < Object.keys(short)
     helpText += "#{gray '['}#{bold yellow param}#{paramList and gray(' ... ]') or gray(']')}"
     helpText += '\n'
     if config[name][param]?['?']
@@ -156,12 +161,15 @@ parse = (config, options={}) ->
         helpText += optionsText
         helpText += '\n\n'
     
-    short['h'] ?= 'help'
+    short['help'] ?= 'h'
+    long['h'] = 'help'
     
     if config.version?
         version = config.version
         delete config.version
-        short['V'] ?= 'version'
+        if not long['V']
+            short['version'] ?= 'V'
+            long['V'] = 'version' 
         
     delete config[name]
     if Object.keys(config).length 
@@ -211,10 +219,10 @@ parse = (config, options={}) ->
         if arg.substr(0,2) == '--'
             arg = arg.substr 2
         else if arg[0] == '-'
-            if not short[arg.substr 1]
+            if not long[arg.substr 1]
                 addIgnored arg
                 continue
-            arg = short[arg.substr 1]
+            arg = long[arg.substr 1]
         else 
             addParamOrIgnore arg
             continue
@@ -234,7 +242,7 @@ parse = (config, options={}) ->
             result[arg] = not result[arg]
         else if not isNaN Number result[arg]
             result[arg] = parseFloat expandedArgs.shift()
-        else if arg in Object.keys(short).map((k) -> short[k])
+        else if arg in Object.keys(short)#.map((k) -> short[k])
             result[arg] = expandedArgs.shift()
         else
             addParamOrIgnore arg
