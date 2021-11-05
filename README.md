@@ -47,13 +47,10 @@ version       1.0.0
 [![npm package][npm-image]][npm-url] 
 [![Build Status][travis-image]][travis-url] 
 [![downloads][downloads-image]][downloads-url] 
-[![Dependencies Status][david-image]][david-url]
 
 [npm-image]:https://img.shields.io/npm/v/karg.svg
 [npm-url]:http://npmjs.org/package/karg
 [travis-image]:https://travis-ci.org/monsterkodi/karg.svg?branch=master
 [travis-url]:https://travis-ci.org/monsterkodi/karg
-[david-image]:https://david-dm.org/monsterkodi/karg/status.svg
-[david-url]:https://david-dm.org/monsterkodi/karg
 [downloads-image]:https://img.shields.io/npm/dm/karg.svg
 [downloads-url]:https://www.npmtrends.com/karg
