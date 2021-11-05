@@ -1,5 +1,5 @@
 name            karg
-version         1.23.0
+version         1.24.0
 description     option parser
 main            js/karg.js
 files
@@ -15,10 +15,10 @@ bugs
 scripts
                 test  ./node_modules/.bin/mocha -c --require koffee/js/register ./test/test.coffee
 dependencies
-                klor  ^2.12.0
-                noon  ^3.0.3
+                klor  ^2.16.1
+                noon  ^3.1.0
 devDependencies
-                chai    ^4.2.0
-                mocha   ^8.2.1
-                koffee  ^1.12.0
-                konrad  ^0.180.0
+                chai    ^4.3.4
+                koffee  ^1.14.0
+                konrad  ^0.189.0
+                mocha   ^9.1.3

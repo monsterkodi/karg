@@ -174,6 +174,38 @@ describe 'config' ->
         """ argv:['-n' 'true']
         .to.eql nodefault:'true'
 
+    # 000   000   0000000          0000000  000   000   0000000   00000000   000000000  
+    # 0000  000  000   000        000       000   000  000   000  000   000     000     
+    # 000 0 000  000   000        0000000   000000000  000   000  0000000       000     
+    # 000  0000  000   000             000  000   000  000   000  000   000     000     
+    # 000   000   0000000         0000000   000   000   0000000   000   000     000     
+    
+    it 'no short' ->
+        
+        a = karg """
+            test
+                noshort  . = false . - -
+        """ argv:['-n']
+        expect(a.noshort).to.eql false
+        
+        a = karg """
+            test
+                noshort  . = true . - -
+        """ argv:['-n']
+        expect(a.noshort).to.eql true
+
+        a = karg """
+            test
+                noshort  . = true . - -
+        """ argv:['--noshort']
+        expect(a.noshort).to.eql false
+
+        a = karg """
+            test
+                noshort  . = false . - -
+        """ argv:['--noshort']
+        expect(a.noshort).to.eql true
+        
     # 00000000    0000000   00000000    0000000   00     00   0000000  
     # 000   000  000   000  000   000  000   000  000   000  000       
     # 00000000   000000000  0000000    000000000  000000000  0000000   
@@ -255,7 +287,7 @@ describe 'config' ->
                 dev-tools  . = false . - D
         """ argv:['-D']
         .to.eql 'dev-tools':true
-        
+                
     # 000   000  00000000  00000000    0000000  000   0000000   000   000  
     # 000   000  000       000   000  000       000  000   000  0000  000  
     #  000 000   0000000   0000000    0000000   000  000   000  000 0 000  
