@@ -1,4 +1,4 @@
-// koffee 1.12.0
+// koffee 1.19.0
 var args;
 
 args = require('../../')("\nsimple\n    additional  . ? unnamed arguments . **\n    an-option   . ? some description  . = default\n    boolean     . ? -b to turn it on  . = false\n    switch      . ? -s to turn it off . = true\n    invisible                         . = hidden\n    \nhelp\n    some help\n    \nversion       1.0.0\n");

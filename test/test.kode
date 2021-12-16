@@ -1,15 +1,10 @@
-        
-assert = require 'assert'
-chai   = require 'chai'
-expect = chai.expect
-log    = console.log
-chai.should()
 
+process = require 'process'
 process.argv = process.argv.concat ['--no-colors']
-karg = require '../coffee/karg' 
-require('klor').kolor.globalize()
+{ kolor } = require 'klor'
+krg = require '../' 
 
-describe 'config' ->
+▸ config
 
     # 000   000  000   000  00     00  0000000    00000000  00000000   
     # 0000  000  000   000  000   000  000   000  000       000   000  
@@ -17,85 +12,85 @@ describe 'config' ->
     # 000  0000  000   000  000 0 000  000   000  000       000   000  
     # 000   000   0000000   000   000  0000000    00000000  000   000  
     
-    it 'number' -> 
+    ▸ number
         
-        expect karg """
+        krg """
             test
                 float    . = 123.567
-        """ argv:[]
-        .to.eql float:123.567
+            """ argv:[] ▸
+            float:123.567
         
-        expect karg """
+        krg """
             test
                 float    . = 0.0
-        """ argv:[]
-        .to.eql float:0
+            """ argv:[] ▸
+            float:0
 
-        expect karg """
+        krg """
             test
                 float  . help text . = 123.567
-        """ argv:[]
-        .to.eql float:123.567
+            """ argv:[] ▸
+            float:123.567
 
-        expect karg """
+        krg """
             test
                 float  . = 123.567
-        """ argv:'-f 666.7'.split ' '
-        .to.eql float:666.7
+            """ argv:'-f 666.7'.split ' ' ▸
+            float:666.7
         
-        expect karg """
+        krg """
             test
                 float  . = 123.5
-        """ argv:'--float 777.6'.split ' '
-        .to.eql float:777.6
+            """ argv:'--float 777.6'.split ' ' ▸
+            float:777.6
     
-        expect karg """
+        krg """
             test
                 int    . = 123
-        """ argv:[]
-        .to.eql int:123
+            """ argv:[] ▸
+            int:123
         
-        expect karg """
+        krg """
             test
                 int    . = 0
-        """ argv:[]
-        .to.eql int:0
+            """ argv:[] ▸
+            int:0
 
-        expect karg """
+        krg """
             test
                 int  . help text . = 123
-        """ argv:[]
-        .to.eql int:123
+            """ argv:[] ▸
+            int:123
 
-        expect karg """
+        krg """
             test
                 int  . help text . = 123
-        """ argv:'-i 666.777'.split ' '
-        .to.eql int:666.777
+            """ argv:'-i 666.777'.split ' ' ▸
+            int:666.777
         
-        expect karg """
+        krg """
             test
                 int  . = 123
-        """ argv:'-i 666'.split ' '
-        .to.eql int:666
+            """ argv:'-i 666'.split ' ' ▸
+            int:666
         
-        expect karg """
+        krg """
             test
                 int  . = 123
-        """ argv:'--int 777'.split ' '
-        .to.eql int:777
+            """ argv:'--int 777'.split ' ' ▸
+            int:777
 
-        expect karg """
+        krg """
             test
                 int  . = 123m
-        """ argv:'--int 777'.split ' '
-        .to.eql int:'777'
+            """ argv:'--int 777'.split ' ' ▸
+            int:'777'
 
-        expect karg """
+        krg """
             test
                 int  . = 123
-        """ argv:'--int 777s'.split ' '
-        .to.eql int:777
+            """ argv:'--int 777s'.split ' ' ▸
+            int:777
         
     # 0000000     0000000    0000000   000      
     # 000   000  000   000  000   000  000      
@@ -103,37 +98,37 @@ describe 'config' ->
     # 000   000  000   000  000   000  000      
     # 0000000     0000000    0000000   0000000  
     
-    it 'bool' -> 
+    ▸ bool
         
-        expect karg """
+        krg """
             test
                 bool    . = true
-        """ argv:[]
-        .to.eql bool:true
+            """ argv:[] ▸
+            bool:true
         
-        expect karg """
+        krg """
             test
                 bool    . = false
-        """ argv:[]
-        .to.eql bool:false
+            """ argv:[] ▸
+            bool:false
 
-        expect karg """
+        krg """
             test
                 bool  . help text . = true
-        """ argv:[]
-        .to.eql bool:true
+            """ argv:[] ▸
+            bool:true
 
-        expect karg """
+        krg """
             test
                 bool  . = false
-        """ argv:['-b']
-        .to.eql bool:true
+            """ argv:['-b'] ▸
+            bool:true
         
-        expect karg """
+        krg """
             test
                 bool  . = false
-        """ argv:['--bool']
-        .to.eql bool:true
+            """ argv:['--bool'] ▸
+            bool:true
         
         
     # 000   000   0000000         0000000    00000000  00000000   0000000   000   000  000      000000000  
@@ -142,37 +137,37 @@ describe 'config' ->
     # 000  0000  000   000        000   000  000       000       000   000  000   000  000         000     
     # 000   000   0000000         0000000    00000000  000       000   000   0000000   0000000     000     
     
-    it 'no default' ->
+    ▸ no default
         
-        expect karg """
+        krg """
             test
                 nodefault  . ? has no default
-        """ argv:[]
-        .to.eql {}
+            """ argv:[] ▸
+            {}
         
-        expect karg """
+        krg """
             test
                 nodefault
-        """ argv:[]
-        .to.eql {}
+            """ argv:[] ▸
+            {}
 
-        expect karg """
+        krg """
             test
                 nodefault   . ? has no default
-        """ argv:['--nodefault' 'test' '-n' 'foo']
-        .to.eql nodefault:'foo'
+            """ argv:['--nodefault' 'test' '-n' 'foo'] ▸
+            nodefault:'foo'
         
-        expect karg """
+        krg """
             test
                 nodefault   . ? has no default  
-        """ argv:['-n' '123']
-        .to.eql nodefault:'123'
+            """ argv:['-n' '123'] ▸
+            nodefault:'123'
 
-        expect karg """
+        krg """
             test
                 nodefault   . ? has no default  
-        """ argv:['-n' 'true']
-        .to.eql nodefault:'true'
+            """ argv:['-n' 'true'] ▸
+            nodefault:'true'
 
     # 000   000   0000000          0000000  000   000   0000000   00000000   000000000  
     # 0000  000  000   000        000       000   000  000   000  000   000     000     
@@ -180,31 +175,28 @@ describe 'config' ->
     # 000  0000  000   000             000  000   000  000   000  000   000     000     
     # 000   000   0000000         0000000   000   000   0000000   000   000     000     
     
-    it 'no short' ->
+    ▸ no short
         
-        a = karg """
+        krg """
             test
                 noshort  . = false . - -
-        """ argv:['-n']
-        expect(a.noshort).to.eql false
+            """ argv:['-n'] ▸ (a) -> a.noshort == false
         
-        a = karg """
-            test
-                noshort  . = true . - -
-        """ argv:['-n']
-        expect(a.noshort).to.eql true
-
-        a = karg """
-            test
-                noshort  . = true . - -
-        """ argv:['--noshort']
-        expect(a.noshort).to.eql false
-
-        a = karg """
+        krg """
             test
                 noshort  . = false . - -
-        """ argv:['--noshort']
-        expect(a.noshort).to.eql true
+            """ argv:['--noshort'] ▸ (a) -> a.noshort == true
+            
+        krg """
+            test
+                noshort  . = true . - -
+            """ argv:['-n'] ▸ (a) -> a.noshort == true
+            
+        krg """
+            test
+                noshort  . = true . - -
+            """ argv:['--noshort'] ▸ (a) -> a.noshort == false
+
         
     # 00000000    0000000   00000000    0000000   00     00   0000000  
     # 000   000  000   000  000   000  000   000  000   000  000       
@@ -212,49 +204,49 @@ describe 'config' ->
     # 000        000   000  000   000  000   000  000 0 000       000  
     # 000        000   000  000   000  000   000  000   000  0000000   
     
-    it 'params' ->
+    ▸ params
         
-        expect karg """
+        krg """
             test
                 params  . **
-        """ argv:[]
-        .to.eql {params:[]}
+            """ argv:[] ▸
+            {params:[]}
 
-        expect karg """
+        krg """
             test
                 params  . **
-        """ argv:['a' 'b' '3']
-        .to.eql params: ['a' 'b' '3']
+            """ argv:['a' 'b' '3'] ▸
+            params: ['a' 'b' '3']
         
-        expect karg """
+        krg """
             test
                 param  . *
-        """ argv:[]
-        .to.eql {}
+            """ argv:[] ▸
+            {}
 
-        expect karg """
+        krg """
             test
                 param  . *
-        """ argv:['x']
-        .to.eql param:'x'
+            """ argv:['x'] ▸
+            param:'x'
         
-        expect karg """
+        krg """
             test
                 params  . ? multiple params . **
-        """ argv:['a' 'b' '3']
-        .to.eql params: ['a' 'b' '3']
+            """ argv:['a' 'b' '3'] ▸
+            params: ['a' 'b' '3']
 
-        expect karg """
+        krg """
             test
                 param  . ? single param . *
-        """ argv:['a' 'b' '3']
-        .to.eql param: '3'
+            """ argv:['a' 'b' '3'] ▸
+            param: '3'
 
-        expect karg """
+        krg """
             test
                 param  . *
-        """ argv:['a' 'b' '3']
-        .to.eql param: '3'
+            """ argv:['a' 'b' '3'] ▸
+            param: '3'
                 
     #  0000000   0000000    0000000  00000000  
     # 000       000   000  000       000       
@@ -262,31 +254,31 @@ describe 'config' ->
     # 000       000   000       000  000       
     #  0000000  000   000  0000000   00000000  
     
-    it 'case' ->
+    ▸ case
         
-        expect karg """
+        krg """
             test
                 Upper  . = false
-        """ argv:[]
-        .to.eql Upper:false
+            """ argv:[] ▸
+            Upper:false
 
-        expect karg """
+        krg """
             test
                 Upper  . = false
-        """ argv:['-U']
-        .to.eql Upper:true
+            """ argv:['-U'] ▸
+            Upper:true
 
-        expect karg """
+        krg """
             test
                 upperCaseU  . = false . - U
-        """ argv:['-U']
-        .to.eql upperCaseU:true
+            """ argv:['-U'] ▸
+            upperCaseU:true
 
-        expect karg """
+        krg """
             test
                 dev-tools  . = false . - D
-        """ argv:['-D']
-        .to.eql 'dev-tools':true
+            """ argv:['-D'] ▸
+            'dev-tools':true
                 
     # 000   000  00000000  00000000    0000000  000   0000000   000   000  
     # 000   000  000       000   000  000       000  000   000  0000  000  
@@ -294,27 +286,27 @@ describe 'config' ->
     #    000     000       000   000       000  000  000   000  000  0000  
     #     0      00000000  000   000  0000000   000   0000000   000   000  
     
-    it 'version' ->
+    ▸ version
         
-        expect karg """
+        krg """
             test
                 arg  . = false
             version  0.1.2
-        """ argv:['-V'], returnLog:true
-        .to.eql '0.1.2'
+            """ argv:['-V'], returnLog:true ▸
+            '0.1.2'
 
-        expect karg """
+        krg """
             test
                 arg  . = false
-        """ argv:['-V']
-        .to.eql arg:false, __ignored:['-V']
+            """ argv:['-V'] ▸
+            arg:false, __ignored:['-V']
         
-        expect karg """
+        krg """
             test
                 Volt  . = should override -V for version
             version  0.1.2
-        """ argv:['-V' '0'], returnLog:true
-        .to.eql Volt:'0'
+            """ argv:['-V' '0'], returnLog:true ▸
+            Volt:'0'
         
     # 000   000  00000000  000      00000000   
     # 000   000  000       000      000   000  
@@ -322,18 +314,16 @@ describe 'config' ->
     # 000   000  000       000      000        
     # 000   000  00000000  0000000  000        
     
-    it 'help' ->
+    ▸ help
         
-        expect strip karg """
+        kolor.strip krg """
             test
                 arg  . = false
-        """ argv:['-h'], returnLog:true
-        .to.include 'usage:  test'
+        """ argv:['-h'], returnLog:true ▸ (a) -> 'usage:  test' in a
                             
-        expect strip karg """
+        kolor.strip krg """
             test
                 arg  . = false
-        """ argv:['--help'], returnLog:true
-        .to.include 'usage:  test'
+        """ argv:['--help'], returnLog:true ▸ (a) -> 'usage:  test' in a
         
         

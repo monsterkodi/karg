@@ -1,316 +1,319 @@
-// koffee 1.14.0
+// monsterkodi/kode 0.133.0
 
-/*
-000   000   0000000   00000000    0000000 
-000  000   000   000  000   000  000      
-0000000    000000000  0000000    000  0000
-000  000   000   000  000   000  000   000
-000   000  000   000  000   000   0000000
- */
-var error, expand, parse,
-    indexOf = [].indexOf;
+var _k_ = {list: function (l) {return (l != null ? typeof l.length === 'number' ? l : [] : [])}, in: function (a,l) {return (typeof l === 'string' && typeof a === 'string' && a.length ? '' : []).indexOf.call(l,a) >= 0}}
 
-require('klor').kolor.globalize();
+var expand, error, parse
 
+require('klor').kolor.globalize()
 
-/*
-00000000  000   000  00000000    0000000   000   000  0000000  
-000        000 000   000   000  000   000  0000  000  000   000
-0000000     00000    00000000   000000000  000 0 000  000   000
-000        000 000   000        000   000  000  0000  000   000
-00000000  000   000  000        000   000  000   000  0000000
- */
+expand = function (l)
+{
+    var a, match
 
-expand = function(l) {
-    var a, j, len, match;
-    for (j = 0, len = l.length; j < len; j++) {
-        a = l[j];
-        if (match = /^\-(\w\w+)$/.exec(a)) {
-            a = match[1].split('').map(function(i) {
-                return '-' + i;
-            });
-            a.unshift(l.indexOf(match.input), 1);
-            l.splice.apply(l, a);
-            return expand(l);
+    var list = _k_.list(l)
+    for (var _20_10_ = 0; _20_10_ < list.length; _20_10_++)
+    {
+        a = list[_20_10_]
+        if (match = /^\-(\w\w+)$/.exec(a))
+        {
+            a = match[1].split('').map(function (i)
+            {
+                return '-' + i
+            })
+            a.unshift(l.indexOf(match.input),1)
+            l.splice.apply(l,a)
+            return expand(l)
         }
     }
-    return l;
-};
+    return l
+}
 
+error = function (msg)
+{
+    var s
 
-/*
-00000000  00000000   00000000    0000000   00000000 
-000       000   000  000   000  000   000  000   000
-0000000   0000000    0000000    000   000  0000000  
-000       000   000  000   000  000   000  000   000
-00000000  000   000  000   000   0000000   000   000
- */
+    s = dim(red("[" + bold("ERROR") + "] "))
+    s += red(msg.trim().split('\n').join("\n        "))
+    console.log(s)
+}
 
-error = function(msg) {
-    var s;
-    s = dim(red("[" + bold("ERROR") + "] "));
-    s += red(msg.trim().split('\n').join("\n        "));
-    return console.log(s);
-};
+parse = function (config, options = {})
+{
+    var pad, noon_parse, name, result, help, short, long, param, paramList, k, v, sht, optionsText, maxArgLength, maxHelpLength, lng, df, shtHelp, helpText, _164_18_, _167_21_, version, _171_29_, noon_stringify, _192_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg
 
-
-/*
-00000000    0000000   00000000    0000000  00000000
-000   000  000   000  000   000  000       000     
-00000000   000000000  0000000    0000000   0000000 
-000        000   000  000   000       000  000     
-000        000   000  000   000  0000000   00000000
- */
-
-parse = function(config, options) {
-    var addIgnored, addParam, addParamOrIgnore, arg, argv, df, expandedArgs, help, helpText, k, lng, long, maxArgLength, maxHelpLength, name, noon_parse, noon_stringify, optionsText, pad, param, paramList, ref, ref1, result, short, sht, shtHelp, v, version;
-    if (options == null) {
-        options = {};
+    pad = function (s, l)
+    {
+        s = String(s)
+        while (s.length < l)
+        {
+            s += ' '
+        }
+        return s
     }
-    pad = function(s, l) {
-        s = String(s);
-        while (s.length < l) {
-            s += ' ';
-        }
-        return s;
-    };
-    if (typeof config === 'string') {
-        noon_parse = require('noon/js/parse');
-        config = noon_parse(config);
-    } else {
-        config = Object.assign({}, config);
+    if (typeof(config) === 'string')
+    {
+        noon_parse = require('noon/js/parse')
+        config = noon_parse(config)
     }
-    name = Object.keys(config)[0];
-    result = {};
-    help = {};
-    short = {};
-    long = {};
-    param = '';
-    paramList = false;
-    ref = config[name];
-    for (k in ref) {
-        v = ref[k];
-        if (0 <= k.indexOf(' ')) {
-            console.error("wrong karg setup: " + (bold("keys can't contain spaces!")) + "\nbroken key: " + (bold(yellow(k))));
-            process.exit(1);
+    else
+    {
+        config = Object.assign({},config)
+    }
+    name = Object.keys(config)[0]
+    result = {}
+    help = {}
+    short = {}
+    long = {}
+    param = ''
+    paramList = false
+    for (k in config[name])
+    {
+        v = config[name][k]
+        if (0 <= k.indexOf(' '))
+        {
+            console.error(`wrong karg setup: ${bold("keys can't contain spaces!")}
+broken key: ${bold(yellow(k))}`)
+            process.exit(1)
         }
-        if (v['='] != null) {
-            result[k] = v['='];
+        if ((v['='] != null))
+        {
+            result[k] = v['=']
         }
-        sht = k[0];
-        if (v['-']) {
-            sht = v['-'];
+        sht = k[0]
+        if (v['-'])
+        {
+            sht = v['-']
         }
-        if (sht === '-') {
-            sht = '';
+        if (sht === '-')
+        {
+            sht = ''
         }
-        if (Array.isArray(v)) {
-            if (indexOf.call(v, '*') >= 0) {
-                param = k;
-            } else if (indexOf.call(v, '**') >= 0) {
-                param = k;
-                paramList = true;
-                result[param] = [];
-            } else {
-                short[k] = sht;
-                if (sht !== '') {
-                    long[sht] = k;
+        if (Array.isArray(v))
+        {
+            if (_k_.in('*',v))
+            {
+                param = k
+            }
+            else if (_k_.in('**',v))
+            {
+                param = k
+                paramList = true
+                result[param] = []
+            }
+            else
+            {
+                short[k] = sht
+                if (sht !== '')
+                {
+                    long[sht] = k
                 }
             }
-        } else {
-            if (indexOf.call(Object.keys(v), '*') >= 0) {
-                param = k;
-            } else if (indexOf.call(Object.keys(v), '**') >= 0) {
-                param = k;
-                paramList = true;
-                result[param] = [];
-            } else {
-                short[k] = sht;
-                if (sht !== '') {
-                    long[sht] = k;
+        }
+        else
+        {
+            if (_k_.in('*',Object.keys(v)))
+            {
+                param = k
+            }
+            else if (_k_.in('**',Object.keys(v)))
+            {
+                param = k
+                paramList = true
+                result[param] = []
+            }
+            else
+            {
+                short[k] = sht
+                if (sht !== '')
+                {
+                    long[sht] = k
                 }
-                help[k] = v['?'];
+                help[k] = v['?']
             }
         }
     }
-
-    /*
-     0000000   00000000   000000000  000   0000000   000   000   0000000
-    000   000  000   000     000     000  000   000  0000  000  000     
-    000   000  00000000      000     000  000   000  000 0 000  0000000 
-    000   000  000           000     000  000   000  000  0000       000
-     0000000   000           000     000   0000000   000   000  0000000
-     */
-    optionsText = "";
-    maxArgLength = 0;
-    maxHelpLength = 0;
-    for (lng in short) {
-        sht = short[lng];
-        if (help[lng] != null) {
-            maxArgLength = Math.max(maxArgLength, sht.length + lng.length);
-            maxHelpLength = Math.max(maxHelpLength, strip(help[lng]).length);
+    optionsText = ""
+    maxArgLength = 0
+    maxHelpLength = 0
+    for (lng in short)
+    {
+        sht = short[lng]
+        if ((help[lng] != null))
+        {
+            maxArgLength = Math.max(maxArgLength,sht.length + lng.length)
+            maxHelpLength = Math.max(maxHelpLength,strip(help[lng]).length)
         }
     }
-    for (lng in short) {
-        sht = short[lng];
-        if (help[lng] != null) {
-            df = (function() {
-                switch (result[lng]) {
+    for (lng in short)
+    {
+        sht = short[lng]
+        if ((help[lng] != null))
+        {
+            df = ((function ()
+            {
+                switch (result[lng])
+                {
                     case false:
-                        return red(dim('✘'));
+                        return red(dim('✘'))
+
                     case true:
-                        return green(bold('✔'));
+                        return green(bold('✔'))
+
                     default:
-                        return result[lng];
+                        return result[lng]
                 }
-            })();
-            shtHelp = sht !== '' ? "" + (gray('-')) + sht : '  ';
-            optionsText += '\n';
-            optionsText += "    " + shtHelp + (gray('  --')) + lng;
-            optionsText += gray(bold("    " + (pad('', Math.max(0, maxArgLength - sht.length - lng.length))) + " " + help[lng]));
-            if (df != null) {
-                optionsText += magenta("    " + (pad('', Math.max(0, maxHelpLength - strip(help[lng]).length))) + " " + df);
-            }
-        }
-    }
 
-    /*
-    000   000  00000000  000      00000000 
-    000   000  000       000      000   000
-    000000000  0000000   000      00000000 
-    000   000  000       000      000      
-    000   000  00000000  0000000  000
-     */
-    helpText = "\n" + (gray('usage:')) + "  " + (bold(name)) + " ";
-    helpText += "" + (gray('[')) + (bold(yellow(param))) + (paramList && gray(' ... ]') || gray(']'));
-    helpText += '\n';
-    if ((ref1 = config[name][param]) != null ? ref1['?'] : void 0) {
-        helpText += yellow(bold("\n" + (pad('        ' + param, maxArgLength + 9)) + " " + (gray(config[name][param]['?']))));
-        if ((config[name][param]['='] != null) && !paramList) {
-            helpText += magenta("  " + (pad('', Math.max(0, maxHelpLength - strip(config[name][param]['?']).length))) + " " + config[name][param]['=']);
-        }
-        helpText += '\n';
-    }
-    if (optionsText.length) {
-        helpText += gray("\noptions:\n");
-        helpText += optionsText;
-        helpText += '\n\n';
-    }
-    if (short['help'] != null) {
-        short['help'];
-    } else {
-        short['help'] = 'h';
-    }
-    long['h'] = 'help';
-    if (config.version != null) {
-        version = config.version;
-        delete config.version;
-        if (!long['V']) {
-            if (short['version'] != null) {
-                short['version'];
-            } else {
-                short['version'] = 'V';
+            }).bind(this))()
+            shtHelp = sht !== '' ? `${gray('-')}${sht}` : '  '
+            optionsText += '\n'
+            optionsText += `    ${shtHelp}${gray('  --')}${lng}`
+            optionsText += gray(bold(`    ${pad('',Math.max(0,maxArgLength - sht.length - lng.length))} ${help[lng]}`))
+            if ((df != null))
+            {
+                optionsText += magenta(`    ${pad('',Math.max(0,maxHelpLength - strip(help[lng]).length))} ${df}`)
             }
-            long['V'] = 'version';
         }
     }
-    delete config[name];
-    if (Object.keys(config).length) {
-        noon_stringify = require('noon/js/stringify');
-        helpText += noon_stringify(config, {
-            maxalign: 16,
-            colors: {
-                key: gray,
-                string: white
-            }
-        });
-        helpText += '\n';
+    helpText = `\n${gray('usage:')}  ${bold(name)} `
+    helpText += `${gray('[')}${bold(yellow(param))}${paramList && gray(' ... ]') || gray(']')}`
+    helpText += '\n'
+    if ((config[name][param] != null ? config[name][param]['?'] : undefined))
+    {
+        helpText += yellow(bold(`\n${pad('        ' + param,maxArgLength + 9)} ${gray(config[name][param]['?'])}`))
+        if ((config[name][param]['='] != null) && !paramList)
+        {
+            helpText += magenta(`  ${pad('',Math.max(0,maxHelpLength - strip(config[name][param]['?']).length))} ${config[name][param]['=']}`)
+        }
+        helpText += '\n'
     }
-
-    /*
-    00000000   00000000   0000000  000   000  000      000000000
-    000   000  000       000       000   000  000         000   
-    0000000    0000000   0000000   000   000  000         000   
-    000   000  000            000  000   000  000         000   
-    000   000  00000000  0000000    0000000   0000000     000
-     */
-    if (options.ignoreArgs != null) {
-        options.ignoreArgs;
-    } else {
-        options.ignoreArgs = 2;
+    if (optionsText.length)
+    {
+        helpText += gray("\noptions:\n")
+        helpText += optionsText
+        helpText += '\n\n'
     }
-    if (options.argv) {
-        argv = options.argv;
-    } else {
-        argv = process.argv.slice(options.ignoreArgs);
-    }
-    expandedArgs = expand(argv);
-    addParam = function(arg) {
-        if (paramList) {
-            return result[param].push(arg);
-        } else {
-            return result[param] = arg;
-        }
-    };
-    addIgnored = function(arg) {
-        if (!result['__ignored']) {
-            result['__ignored'] = [];
-        }
-        return result['__ignored'].push(arg);
-    };
-    addParamOrIgnore = function(arg) {
-        if (param) {
-            return addParam(arg);
-        } else {
-            return addIgnored(arg);
-        }
-    };
-    while (arg = expandedArgs.shift()) {
-        if (arg.substr(0, 2) === '--') {
-            arg = arg.substr(2);
-        } else if (arg[0] === '-') {
-            if (!long[arg.substr(1)]) {
-                addIgnored(arg);
-                continue;
-            }
-            arg = long[arg.substr(1)];
-        } else {
-            addParamOrIgnore(arg);
-            continue;
-        }
-        if (arg === 'help') {
-            if (options.returnLog) {
-                return helpText;
-            }
-            console.log(helpText);
-            if (options.dontExit) {
-                return;
-            }
-            process.exit();
-        } else if (arg === 'version' && (version != null)) {
-            if (options.returnLog) {
-                return version;
-            }
-            console.log(version);
-            if (options.dontExit) {
-                return;
-            }
-            process.exit();
-        }
-        if (result[arg] === false || result[arg] === true) {
-            result[arg] = !result[arg];
-        } else if (!isNaN(Number(result[arg]))) {
-            result[arg] = parseFloat(expandedArgs.shift());
-        } else if (indexOf.call(Object.keys(short), arg) >= 0) {
-            result[arg] = expandedArgs.shift();
-        } else {
-            addParamOrIgnore(arg);
+    short['help'] = ((_164_18_=short['help']) != null ? _164_18_ : 'h')
+    long['h'] = 'help'
+    if ((config.version != null))
+    {
+        version = config.version
+        delete config.version
+        if (!long['V'])
+        {
+            short['version'] = ((_171_29_=short['version']) != null ? _171_29_ : 'V')
+            long['V'] = 'version'
         }
     }
-    return result;
-};
-
-module.exports = parse;
-
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoia2FyZy5qcyIsInNvdXJjZVJvb3QiOiIuLi9jb2ZmZWUiLCJzb3VyY2VzIjpbImthcmcuY29mZmVlIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUE7Ozs7Ozs7QUFBQSxJQUFBLG9CQUFBO0lBQUE7O0FBUUEsT0FBQSxDQUFRLE1BQVIsQ0FBZSxDQUFDLEtBQUssQ0FBQyxTQUF0QixDQUFBOzs7QUFFQTs7Ozs7Ozs7QUFRQSxNQUFBLEdBQVMsU0FBQyxDQUFEO0FBQ0wsUUFBQTtBQUFBLFNBQUEsbUNBQUE7O1FBQ0ksSUFBRyxLQUFBLEdBQVEsYUFBYSxDQUFDLElBQWQsQ0FBbUIsQ0FBbkIsQ0FBWDtZQUNJLENBQUEsR0FBSSxLQUFNLENBQUEsQ0FBQSxDQUFFLENBQUMsS0FBVCxDQUFlLEVBQWYsQ0FBa0IsQ0FBQyxHQUFuQixDQUF1QixTQUFDLENBQUQ7dUJBQU8sR0FBQSxHQUFJO1lBQVgsQ0FBdkI7WUFDSixDQUFDLENBQUMsT0FBRixDQUFVLENBQUMsQ0FBQyxPQUFGLENBQVUsS0FBSyxDQUFDLEtBQWhCLENBQVYsRUFBa0MsQ0FBbEM7WUFDQSxDQUFDLENBQUMsTUFBTSxDQUFDLEtBQVQsQ0FBZSxDQUFmLEVBQWtCLENBQWxCO0FBQ0EsbUJBQU8sTUFBQSxDQUFPLENBQVAsRUFKWDs7QUFESjtXQU1BO0FBUEs7OztBQVNUOzs7Ozs7OztBQVFBLEtBQUEsR0FBUSxTQUFDLEdBQUQ7QUFDSixRQUFBO0lBQUEsQ0FBQSxHQUFJLEdBQUEsQ0FBSSxHQUFBLENBQUksR0FBQSxHQUFNLElBQUEsQ0FBSyxPQUFMLENBQU4sR0FBc0IsSUFBMUIsQ0FBSjtJQUNKLENBQUEsSUFBSyxHQUFBLENBQUksR0FBRyxDQUFDLElBQUosQ0FBQSxDQUFVLENBQUMsS0FBWCxDQUFpQixJQUFqQixDQUFzQixDQUFDLElBQXZCLENBQTRCLFlBQTVCLENBQUo7V0FBNkMsT0FBQSxDQUNsRCxHQURrRCxDQUM5QyxDQUQ4QztBQUY5Qzs7O0FBS1I7Ozs7Ozs7O0FBY0EsS0FB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QSx1QkFBQTs7WUFDQSxPQUFPLENBQUMsSUFBUixDQUFBLEVBSko7U0FBQSxNQUtLLElBQUcsR0FBQSxLQUFPLFNBQVAsSUFBcUIsaUJBQXhCO1lBQ0QsSUFBRyxPQUFPLENBQUMsU0FBWDtBQUEwQix1QkFBTyxRQUFqQzs7WUFBd0MsT0FBQSxDQUN4QyxHQUR3QyxDQUNwQyxPQURvQztZQUV4QyxJQUFVLE9BQU8sQ0FBQyxRQUFsQjtBQUFBLHVCQUFBOztZQUNBLE9BQU8sQ0FBQyxJQUFSLENBQUEsRUFKQzs7UUFNTCxJQUFHLE1BQU8sQ0FBQSxHQUFBLENBQVAsS0FBZSxLQUFmLElBQXdCLE1BQU8sQ0FBQSxHQUFBLENBQVAsS0FBZSxJQUExQztZQUNJLE1BQU8sQ0FBQSxHQUFBLENBQVAsR0FBYyxDQUFJLE1BQU8sQ0FBQSxHQUFBLEVBRDdCO1NBQUEsTUFFSyxJQUFHLENBQUksS0FBQSxDQUFNLE1BQUEsQ0FBTyxNQUFPLENBQUEsR0FBQSxDQUFkLENBQU4sQ0FBUDtZQUNELE1BQU8sQ0FBQSxHQUFBLENBQVAsR0FBYyxVQUFBLENBQVcsWUFBWSxDQUFDLEtBQWIsQ0FBQSxDQUFYLEVBRGI7U0FBQSxNQUVBLElBQUcsYUFBTyxNQUFNLENBQUMsSUFBUCxDQUFZLEtBQVosQ0FBUCxFQUFBLEdBQUEsTUFBSDtZQUNELE1BQU8sQ0FBQSxHQUFBLENBQVAsR0FBYyxZQUFZLENBQUMsS0FBYixDQUFBLEVBRGI7U0FBQSxNQUFBO1lBR0QsZ0JBQUEsQ0FBaUIsR0FBakIsRUFIQzs7SUE1QlQ7V0FnQ0E7QUFsTUk7O0FBb01SLE1BQU0sQ0FBQyxPQUFQLEdBQWlCIiwic291cmNlc0NvbnRlbnQiOlsiIyMjXG4wMDAgICAwMDAgICAwMDAwMDAwICAgMDAwMDAwMDAgICAgMDAwMDAwMCBcbjAwMCAgMDAwICAgMDAwICAgMDAwICAwMDAgICAwMDAgIDAwMCAgICAgIFxuMDAwMDAwMCAgICAwMDAwMDAwMDAgIDAwMDAwMDAgICAgMDAwICAwMDAwXG4wMDAgIDAwMCAgIDAwMCAgIDAwMCAgMDAwICAgMDAwICAwMDAgICAwMDBcbjAwMCAgIDAwMCAgMDAwICAgMDAwICAwMDAgICAwMDAgICAwMDAwMDAwIFxuIyMjXG5cbnJlcXVpcmUoJ2tsb3InKS5rb2xvci5nbG9iYWxpemUoKVxuICAgIFxuIyMjXG4wMDAwMDAwMCAgMDAwICAgMDAwICAwMDAwMDAwMCAgICAwMDAwMDAwICAgMDAwICAgMDAwICAwMDAwMDAwICBcbjAwMCAgICAgICAgMDAwIDAwMCAgIDAwMCAgIDAwMCAgMDAwICAgMDAwICAwMDAwICAwMDAgIDAwMCAgIDAwMFxuMDAwMDAwMCAgICAgMDAwMDAgICAgMDAwMDAwMDAgICAwMDAwMDAwMDAgIDAwMCAwIDAwMCAgMDAwICAgMDAwXG4wMDAgICAgICAgIDAwMCAwMDAgICAwMDAgICAgICAgIDAwMCAgIDAwMCAgMDAwICAwMDAwICAwMDAgICAwMDBcbjAwMDAwMDAwICAwMDAgICAwMDAgIDAwMCAgICAgICAgMDAwICAgMDAwICAwMDAgICAwMDAgIDAwMDAwMDAgIFxuIyMjXG5cbmV4cGFuZCA9IChsKSAtPlxuICAgIGZvciBhIGluIGwgXG4gICAgICAgIGlmIG1hdGNoID0gL15cXC0oXFx3XFx3KykkLy5leGVjIGFcbiAgICAgICAgICAgIGEgPSBtYXRjaFsxXS5zcGxpdCgnJykubWFwIChpKSAtPiAnLScraVxuICAgICAgICAgICAgYS51bnNoaWZ0IGwuaW5kZXhPZihtYXRjaC5pbnB1dCksIDFcbiAgICAgICAgICAgIGwuc3BsaWNlLmFwcGx5IGwsIGFcbiAgICAgICAgICAgIHJldHVybiBleHBhbmQgbFxuICAgIGxcblxuIyMjXG4wMDAwMDAwMCAgMDAwMDAwMDAgICAwMDAwMDAwMCAgICAwMDAwMDAwICAgMDAwMDAwMDAgXG4wMDAgICAgICAgMDAwICAgMDAwICAwMDAgICAwMDAgIDAwMCAgIDAwMCAgMDAwICAgMDAwXG4wMDAwMDAwICAgMDAwMDAwMCAgICAwMDAwMDAwICAgIDAwMCAgIDAwMCAgMDAwMDAwMCAgXG4wMDAgICAgICAgMDAwICAgMDAwICAwMDAgICAwMDAgIDAwMCAgIDAwMCAgMDAwICAgMDAwXG4wMDAwMDAwMCAgMDAwICAgMDAwICAwMDAgICAwMDAgICAwMDAwMDAwICAgMDAwICAgMDAwXG4jIyNcblxuZXJyb3IgPSAobXNnKSAtPlxuICAgIHMgPSBkaW0gcmVkIFwiW1wiICsgYm9sZChcIkVSUk9SXCIpICsgXCJdIFwiXG4gICAgcyArPSByZWQgbXNnLnRyaW0oKS5zcGxpdCgnXFxuJykuam9pbihcIlxcbiAgICAgICAgXCIpXG4gICAgbG9nIHNcblxuIyMjXG4wMDAwMDAwMCAgICAwMDAwMDAwICAgMDAwMDAwMDAgICAgMDAwMDAwMCAgMDAwMDAwMDBcbjAwMCAgIDAwMCAgMDAwICAgMDAwICAwMDAgICAwMDAgIDAwMCAgICAgICAwMDAgICAgIFxuMDAwMDAwMDAgICAwMDAwMDAwMDAgIDAwMDAwMDAgICAgMDAwMDAwMCAgIDAwMDAwMDAgXG4wMDAgICAgICAgIDAwMCAgIDAwMCAgMDAwICAgMDAwICAgICAgIDAwMCAgMDAwICAgICBcbjAwMCAgICAgICAgMDAwICAgMDAwICAwMDAgICAwMDAgIDAwMDAwMDAgICAwMDAwMDAwMFxuIyMjXG5cbiMgb3B0aW9uczogXG4jICAgICBpZ25vcmVBcmdzOiAgbnVtYmVyIG9mIGxlYWRpbmcgcHJvY2Vzcy5hcmd2IGl0ZW1zIHRvIGlnbm9yZSAoZGVmYXVsdD0yKVxuIyAgICAgYXJndjogICAgICAgIGxpc3Qgb2Ygc3RyaW5nIGFyZ3VtZW50cyB0byB1c2UgaW5zdGVhZCBvZiBwcm9jZXNzLmFyZ3ZcbiMgICAgIGRvbnRFeGl0OiAgICBkb24ndCBleGl0IHByb2Nlc3Mgb24gLVYvLS12ZXJzaW9uIG9yIC1oLy0taGVscCAgKHJldHVybnMgdW5kZWZpbmVkIGluc3RlYWQpXG4jICAgICByZXR1cm5Mb2c6ICAgaGVscC92ZXJzaW9uIG91dHB1dCBpcyByZXR1cm5lZCBpbnN0ZWFkIG9mIGxvZ2dlZCAoaW1wbGllcyBkb250RXhpdClcblxucGFyc2UgPSAoY29uZmlnLCBvcHRpb25zPXt9KSAtPlxuICAgIFxuICAgIHBhZCA9IChzLCBsKSAtPlxuICAgICAgICBzID0gU3RyaW5nIHNcbiAgICAgICAgd2hpbGUgcy5sZW5ndGggPCBsIHRoZW4gcyArPSAnICdcbiAgICAgICAgc1xuICAgIFxuICAgIGlmIHR5cGVvZihjb25maWcpID09ICdzdHJpbmcnXG4gICAgICAgIG5vb25fcGFyc2UgPSByZXF1aXJlICdub29uL2pzL3BhcnNlJ1xuICAgICAgICBjb25maWcgPSBub29uX3BhcnNlIGNvbmZpZ1xuICAgIGVsc2VcbiAgICAgICAgY29uZmlnID0gT2JqZWN0LmFzc2lnbiB7fSwgY29uZmlnXG4gICAgICAgICAgICBcbiAgICBuYW1lICAgPSBPYmplY3Qua2V5cyhjb25maWcpWzBdICMgdGhlIGFwcGxpY2F0aW9uL3NjcmlwdCBuYW1lXG4gICAgcmVzdWx0ID0ge30gIyB0aGUgb2JqZWN0IGNyZWF0ZWQgZnJvbSB0aGUgcHJvdmlkZWQgYXJndW1lbnRzIGFuZCB0aGUgY29uZmlndXJhdGlvblxuICAgIGhlbHAgICA9IHt9ICMgbWFwcyBrZXlzIHRvIGhlbHAgdGV4dHNcbiAgICBzaG9ydCAgPSB7fSAjIG1hcHMga2V5cyB0byBzaG9ydGN1dCBrZXlzXG4gICAgbG9uZyAgID0ge30gIyBtYXBzIHNob3J0Y3V0IGtleXMgdG8ga2V5c1xuICAgIHBhcmFtICA9ICcnICMgbmFtZSBvZiBub24tb3B0aW9uIHBhcmFtZXRlcnNcbiAgICBwYXJhbUxpc3QgPSBmYWxzZVxuICAgIFxuICAgIGZvciBrLHYgb2YgY29uZmlnW25hbWVdXG4gICAgICAgIFxuICAgICAgICBpZiAwIDw9IGsuaW5kZXhPZiAnICdcbiAgICAgICAgICAgIGVycm9yIFwiXCJcIlxuICAgICAgICAgICAgd3Jvbmcga2FyZyBzZXR1cDogI3tib2xkIFwia2V5cyBjYW4ndCBjb250YWluIHNwYWNlcyFcIn1cbiAgICAgICAgICAgIGJyb2tlbiBrZXk6ICN7Ym9sZCB5ZWxsb3cga31cbiAgICAgICAgICAgIFwiXCJcIlxuICAgICAgICAgICAgcHJvY2Vzcy5leGl0IDFcbiAgICAgICAgXG4gICAgICAgIGlmIHZbJz0nXT8gdGhlbiByZXN1bHRba10gPSB2Wyc9J11cbiAgICAgICAgXG4gICAgICAgIHNodCA9IGtbMF1cbiAgICAgICAgaWYgdlsnLSddIHRoZW4gc2h0ID0gdlsnLSddXG4gICAgICAgIGlmIHNodCA9PSAnLScgdGhlbiBzaHQgPSAnJ1xuICAgICAgICBcbiAgICAgICAgaWYgQXJyYXkuaXNBcnJheSB2XG4gICAgICAgICAgICBpZiAnKicgaW4gdlxuICAgICAgICAgICAgICAgIHBhcmFtID0ga1xuICAgICAgICAgICAgZWxzZSBpZiAnKionIGluIHZcbiAgICAgICAgICAgICAgICBwYXJhbSA9IGtcbiAgICAgICAgICAgICAgICBwYXJhbUxpc3QgPSB0cnVlXG4gICAgICAgICAgICAgICAgcmVzdWx0W3BhcmFtXSA9IFtdXG4gICAgICAgICAgICBlbHNlXG4gICAgICAgICAgICAgICAgc2hvcnRba10gID0gc2h0XG4gICAgICAgICAgICAgICAgbG9uZ1tzaHRdID0gayBpZiBzaHQgIT0gJydcbiAgICAgICAgZWxzZVxuICAgICAgICAgICAgaWYgJyonIGluIE9iamVjdC5rZXlzIHZcbiAgICAgICAgICAgICAgICBwYXJhbSA9IGtcbiAgICAgICAgICAgIGVsc2UgaWYgJyoqJyBpbiBPYmplY3Qua2V5cyB2XG4gICAgICAgICAgICAgICAgcGFyYW0gPSBrXG4gICAgICAgICAgICAgICAgcGFyYW1MaXN0ID0gdHJ1ZVxuICAgICAgICAgICAgICAgIHJlc3VsdFtwYXJhbV0gPSBbXVxuICAgICAgICAgICAgZWxzZVxuICAgICAgICAgICAgICAgIHNob3J0W2tdICA9IHNodFxuICAgICAgICAgICAgICAgIGxvbmdbc2h0XSA9IGsgaWYgc2h0ICE9ICcnXG4gICAgICAgICAgICAgICAgaGVscFtrXSAgID0gdlsnPyddXG5cbiAgICAjIyNcbiAgICAgMDAwMDAwMCAgIDAwMDAwMDAwICAgMDAwMDAwMDAwICAwMDAgICAwMDAwMDAwICAgMDAwICAgMDAwICAgMDAwMDAwMFxuICAgIDAwMCAgIDAwMCAgMDAwICAgMDAwICAgICAwMDAgICAgIDAwMCAgMDAwICAgMDAwICAwMDAwICAwMDAgIDAwMCAgICAgXG4gICAgMDAwICAgMDAwICAwMDAwMDAwMCAgICAgIDAwMCAgICAgMDAwICAwMDAgICAwMDAgIDAwMCAwIDAwMCAgMDAwMDAwMCBcbiAgICAwMDAgICAwMDAgIDAwMCAgICAgICAgICAgMDAwICAgICAwMDAgIDAwMCAgIDAwMCAgMDAwICAwMDAwICAgICAgIDAwMFxuICAgICAwMDAwMDAwICAgMDAwICAgICAgICAgICAwMDAgICAgIDAwMCAgIDAwMDAwMDAgICAwMDAgICAwMDAgIDAwMDAwMDAgXG4gICAgIyMjXG4gICAgXG4gICAgb3B0aW9uc1RleHQgPSBcIlwiXG4gICAgICAgIFxuICAgIG1heEFyZ0xlbmd0aCA9IDBcbiAgICBtYXhIZWxwTGVuZ3RoID0gMFxuICAgIGZvciBsbmcsc2h0IG9mIHNob3J0XG4gICAgICAgIGlmIGhlbHBbbG5nXT9cbiAgICAgICAgICAgIG1heEFyZ0xlbmd0aCAgPSBNYXRoLm1heChtYXhBcmdMZW5ndGgsIHNodC5sZW5ndGgrbG5nLmxlbmd0aClcbiAgICAgICAgICAgIG1heEhlbHBMZW5ndGggPSBNYXRoLm1heChtYXhIZWxwTGVuZ3RoLCBzdHJpcChoZWxwW2xuZ10pLmxlbmd0aClcbiAgICAgICAgICAgIFxuICAgIGZvciBsbmcsc2h0IG9mIHNob3J0XG4gICAgICAgIGlmIGhlbHBbbG5nXT9cbiAgICAgICAgICAgIGRmID0gc3dpdGNoIHJlc3VsdFtsbmddXG4gICAgICAgICAgICAgICAgd2hlbiBmYWxzZSB0aGVuIHJlZCBkaW0gJ+KcmCdcbiAgICAgICAgICAgICAgICB3aGVuIHRydWUgIHRoZW4gZ3JlZW4gYm9sZCAn4pyUJ1xuICAgICAgICAgICAgICAgIGVsc2UgcmVzdWx0W2xuZ11cbiAgICAgICAgICAgIHNodEhlbHAgPSBpZiBzaHQgIT0gJycgdGhlbiBcIiN7Z3JheSAnLSd9I3tzaHR9XCIgZWxzZSAnICAnXG4gICAgICAgICAgICBvcHRpb25zVGV4dCArPSAnXFxuJ1xuICAgICAgICAgICAgb3B0aW9uc1RleHQgKz0gXCIgICAgI3tzaHRIZWxwfSN7Z3JheSAnICAtLSd9I3tsbmd9XCJcbiAgICAgICAgICAgIG9wdGlvbnNUZXh0ICs9IGdyYXkgYm9sZCBcIiAgICAje3BhZCAnJyBNYXRoLm1heCgwLG1heEFyZ0xlbmd0aC1zaHQubGVuZ3RoLWxuZy5sZW5ndGgpfSAje2hlbHBbbG5nXX1cIlxuICAgICAgICAgICAgb3B0aW9uc1RleHQgKz0gbWFnZW50YSAgIFwiICAgICN7cGFkICcnIE1hdGgubWF4KDAsbWF4SGVscExlbmd0aC1zdHJpcChoZWxwW2xuZ10pLmxlbmd0aCl9ICN7ZGZ9XCIgaWYgZGY/XG5cbiAgICAjIyNcbiAgICAwMDAgICAwMDAgIDAwMDAwMDAwICAwMDAgICAgICAwMDAwMDAwMCBcbiAgICAwMDAgICAwMDAgIDAwMCAgICAgICAwMDAgICAgICAwMDAgICAwMDBcbiAgICAwMDAwMDAwMDAgIDAwMDAwMDAgICAwMDAgICAgICAwMDAwMDAwMCBcbiAgICAwMDAgICAwMDAgIDAwMCAgICAgICAwMDAgICAgICAwMDAgICAgICBcbiAgICAwMDAgICAwMDAgIDAwMDAwMDAwICAwMDAwMDAwICAwMDAgICAgICBcbiAgICAjIyNcbiAgICBcbiAgICBoZWxwVGV4dCAgPSBcIlxcbiN7Z3JheSAndXNhZ2U6J30gICN7Ym9sZCBuYW1lfSBcIlxuICAgICMgaGVscFRleHQgKz0gXCIje2dyYXkgJ1snfSN7Ym9sZCBncmF5ICdvcHRpb25zJ30je2dyYXkgJ10nfSBcIiBpZiAxIDwgT2JqZWN0LmtleXMoc2hvcnQpXG4gICAgaGVscFRleHQgKz0gXCIje2dyYXkgJ1snfSN7Ym9sZCB5ZWxsb3cgcGFyYW19I3twYXJhbUxpc3QgYW5kIGdyYXkoJyAuLi4gXScpIG9yIGdyYXkoJ10nKX1cIlxuICAgIGhlbHBUZXh0ICs9ICdcXG4nXG4gICAgaWYgY29uZmlnW25hbWVdW3BhcmFtXT9bJz8nXVxuICAgICAgICBoZWxwVGV4dCArPSB5ZWxsb3cgYm9sZCBcIlxcbiN7cGFkICcgICAgICAgICcrcGFyYW0sIG1heEFyZ0xlbmd0aCs5fSAje2dyYXkgY29uZmlnW25hbWVdW3BhcmFtXVsnPyddfVwiXG4gICAgICAgIGhlbHBUZXh0ICs9IG1hZ2VudGEoXCIgICN7cGFkICcnLCBNYXRoLm1heCgwLG1heEhlbHBMZW5ndGgtc3RyaXAoY29uZmlnW25hbWVdW3BhcmFtXVsnPyddKS5sZW5ndGgpfSAje2NvbmZpZ1tuYW1lXVtwYXJhbV1bJz0nXX1cIikgaWYgY29uZmlnW25hbWVdW3BhcmFtXVsnPSddPyBhbmQgbm90IHBhcmFtTGlzdFxuICAgICAgICBoZWxwVGV4dCArPSAnXFxuJ1xuICAgICAgICAgICAgXG4gICAgaWYgb3B0aW9uc1RleHQubGVuZ3RoXG4gICAgICAgIGhlbHBUZXh0ICs9IGdyYXkgXCJcXG5vcHRpb25zOlxcblwiXG4gICAgICAgIGhlbHBUZXh0ICs9IG9wdGlvbnNUZXh0XG4gICAgICAgIGhlbHBUZXh0ICs9ICdcXG5cXG4nXG4gICAgXG4gICAgc2hvcnRbJ2hlbHAnXSA/PSAnaCdcbiAgICBsb25nWydoJ10gPSAnaGVscCdcbiAgICBcbiAgICBpZiBjb25maWcudmVyc2lvbj9cbiAgICAgICAgdmVyc2lvbiA9IGNvbmZpZy52ZXJzaW9uXG4gICAgICAgIGRlbGV0ZSBjb25maWcudmVyc2lvblxuICAgICAgICBpZiBub3QgbG9uZ1snViddXG4gICAgICAgICAgICBzaG9ydFsndmVyc2lvbiddID89ICdWJ1xuICAgICAgICAgICAgbG9uZ1snViddID0gJ3ZlcnNpb24nIFxuICAgICAgICBcbiAgICBkZWxldGUgY29uZmlnW25hbWVdXG4gICAgaWYgT2JqZWN0LmtleXMoY29uZmlnKS5sZW5ndGggXG4gICAgICAgIG5vb25fc3RyaW5naWZ5ID0gcmVxdWlyZSAnbm9vbi9qcy9zdHJpbmdpZnknXG4gICAgICAgIGhlbHBUZXh0ICs9IG5vb25fc3RyaW5naWZ5IGNvbmZpZywgXG4gICAgICAgICAgICBtYXhhbGlnbjogMTZcbiAgICAgICAgICAgIGNvbG9yczogXG4gICAgICAgICAgICAgICAga2V5OiAgICAgZ3JheVxuICAgICAgICAgICAgICAgIHN0cmluZzogIHdoaXRlXG4gICAgICAgIGhlbHBUZXh0ICs9ICdcXG4nXG4gICAgICAgIFxuICAgICMjI1xuICAgIDAwMDAwMDAwICAgMDAwMDAwMDAgICAwMDAwMDAwICAwMDAgICAwMDAgIDAwMCAgICAgIDAwMDAwMDAwMFxuICAgIDAwMCAgIDAwMCAgMDAwICAgICAgIDAwMCAgICAgICAwMDAgICAwMDAgIDAwMCAgICAgICAgIDAwMCAgIFxuICAgIDAwMDAwMDAgICAgMDAwMDAwMCAgIDAwMDAwMDAgICAwMDAgICAwMDAgIDAwMCAgICAgICAgIDAwMCAgIFxuICAgIDAwMCAgIDAwMCAgMDAwICAgICAgICAgICAgMDAwICAwMDAgICAwMDAgIDAwMCAgICAgICAgIDAwMCAgIFxuICAgIDAwMCAgIDAwMCAgMDAwMDAwMDAgIDAwMDAwMDAgICAgMDAwMDAwMCAgIDAwMDAwMDAgICAgIDAwMCAgIFxuICAgICMjI1xuXG4gICAgb3B0aW9ucy5pZ25vcmVBcmdzID89IDJcbiAgICBcbiAgICBpZiBvcHRpb25zLmFyZ3ZcbiAgICAgICAgYXJndiA9IG9wdGlvbnMuYXJndlxuICAgIGVsc2VcbiAgICAgICAgYXJndiA9IHByb2Nlc3MuYXJndi5zbGljZSBvcHRpb25zLmlnbm9yZUFyZ3NcbiAgICAgICAgXG4gICAgZXhwYW5kZWRBcmdzID0gZXhwYW5kIGFyZ3ZcblxuICAgIGFkZFBhcmFtID0gKGFyZykgLT5cbiAgICAgICAgaWYgcGFyYW1MaXN0XG4gICAgICAgICAgICByZXN1bHRbcGFyYW1dLnB1c2ggYXJnXG4gICAgICAgIGVsc2VcbiAgICAgICAgICAgIHJlc3VsdFtwYXJhbV0gPSBhcmdcbiAgICAgICAgICAgIFxuICAgIGFkZElnbm9yZWQgPSAoYXJnKSAtPlxuICAgICAgICBpZiBub3QgcmVzdWx0WydfX2lnbm9yZWQnXSB0aGVuIHJlc3VsdFsnX19pZ25vcmVkJ10gPSBbXVxuICAgICAgICByZXN1bHRbJ19faWdub3JlZCddLnB1c2ggYXJnXG4gICAgICAgIFxuICAgIGFkZFBhcmFtT3JJZ25vcmUgPSAoYXJnKSAtPlxuICAgICAgICBpZiBwYXJhbVxuICAgICAgICAgICAgYWRkUGFyYW0gYXJnXG4gICAgICAgIGVsc2VcbiAgICAgICAgICAgIGFkZElnbm9yZWQgYXJnXG4gICAgXG4gICAgd2hpbGUgYXJnID0gZXhwYW5kZWRBcmdzLnNoaWZ0KClcbiAgICAgICAgICAgIFxuICAgICAgICBpZiBhcmcuc3Vic3RyKDAsMikgPT0gJy0tJ1xuICAgICAgICAgICAgYXJnID0gYXJnLnN1YnN0ciAyXG4gICAgICAgIGVsc2UgaWYgYXJnWzBdID09ICctJ1xuICAgICAgICAgICAgaWYgbm90IGxvbmdbYXJnLnN1YnN0ciAxXVxuICAgICAgICAgICAgICAgIGFkZElnbm9yZWQgYXJnXG4gICAgICAgICAgICAgICAgY29udGludWVcbiAgICAgICAgICAgIGFyZyA9IGxvbmdbYXJnLnN1YnN0ciAxXVxuICAgICAgICBlbHNlIFxuICAgICAgICAgICAgYWRkUGFyYW1Pcklnbm9yZSBhcmdcbiAgICAgICAgICAgIGNvbnRpbnVlXG4gICAgICAgICAgICBcbiAgICAgICAgaWYgYXJnID09ICdoZWxwJ1xuICAgICAgICAgICAgaWYgb3B0aW9ucy5yZXR1cm5Mb2cgdGhlbiByZXR1cm4gaGVscFRleHRcbiAgICAgICAgICAgIGxvZyBoZWxwVGV4dFxuICAgICAgICAgICAgcmV0dXJuIGlmIG9wdGlvbnMuZG9udEV4aXRcbiAgICAgICAgICAgIHByb2Nlc3MuZXhpdCgpXG4gICAgICAgIGVsc2UgaWYgYXJnID09ICd2ZXJzaW9uJyBhbmQgdmVyc2lvbj9cbiAgICAgICAgICAgIGlmIG9wdGlvbnMucmV0dXJuTG9nIHRoZW4gcmV0dXJuIHZlcnNpb25cbiAgICAgICAgICAgIGxvZyB2ZXJzaW9uXG4gICAgICAgICAgICByZXR1cm4gaWYgb3B0aW9ucy5kb250RXhpdFxuICAgICAgICAgICAgcHJvY2Vzcy5leGl0KClcbiAgICAgICAgICAgIFxuICAgICAgICBpZiByZXN1bHRbYXJnXSA9PSBmYWxzZSBvciByZXN1bHRbYXJnXSA9PSB0cnVlXG4gICAgICAgICAgICByZXN1bHRbYXJnXSA9IG5vdCByZXN1bHRbYXJnXVxuICAgICAgICBlbHNlIGlmIG5vdCBpc05hTiBOdW1iZXIgcmVzdWx0W2FyZ11cbiAgICAgICAgICAgIHJlc3VsdFthcmddID0gcGFyc2VGbG9hdCBleHBhbmRlZEFyZ3Muc2hpZnQoKVxuICAgICAgICBlbHNlIGlmIGFyZyBpbiBPYmplY3Qua2V5cyhzaG9ydCkjLm1hcCgoaykgLT4gc2hvcnRba10pXG4gICAgICAgICAgICByZXN1bHRbYXJnXSA9IGV4cGFuZGVkQXJncy5zaGlmdCgpXG4gICAgICAgIGVsc2VcbiAgICAgICAgICAgIGFkZFBhcmFtT3JJZ25vcmUgYXJnXG4gICAgcmVzdWx0XG5cbm1vZHVsZS5leHBvcnRzID0gcGFyc2VcbiJdfQ==
-//# sourceURL=../coffee/karg.coffee
+    delete config[name]
+    if (Object.keys(config).length)
+    {
+        noon_stringify = require('noon/js/stringify')
+        helpText += noon_stringify(config,{maxalign:16,colors:{key:gray,string:white}})
+        helpText += '\n'
+    }
+    options.ignoreArgs = ((_192_23_=options.ignoreArgs) != null ? _192_23_ : 2)
+    if (options.argv)
+    {
+        argv = options.argv
+    }
+    else
+    {
+        argv = process.argv.slice(options.ignoreArgs)
+    }
+    expandedArgs = expand(argv)
+    addParam = function (arg)
+    {
+        if (paramList)
+        {
+            return result[param].push(arg)
+        }
+        else
+        {
+            return result[param] = arg
+        }
+    }
+    addIgnored = function (arg)
+    {
+        if (!result['__ignored'])
+        {
+            result['__ignored'] = []
+        }
+        return result['__ignored'].push(arg)
+    }
+    addParamOrIgnore = function (arg)
+    {
+        if (param)
+        {
+            return addParam(arg)
+        }
+        else
+        {
+            return addIgnored(arg)
+        }
+    }
+    while (arg = expandedArgs.shift())
+    {
+        if (arg.substr(0,2) === '--')
+        {
+            arg = arg.substr(2)
+        }
+        else if (arg[0] === '-')
+        {
+            if (!long[arg.substr(1)])
+            {
+                addIgnored(arg)
+                continue
+            }
+            arg = long[arg.substr(1)]
+        }
+        else
+        {
+            addParamOrIgnore(arg)
+            continue
+        }
+        if (arg === 'help')
+        {
+            if (options.returnLog)
+            {
+                return helpText
+            }
+            console.log(helpText)
+            if (options.dontExit)
+            {
+                return
+            }
+            process.exit()
+        }
+        else if (arg === 'version' && (version != null))
+        {
+            if (options.returnLog)
+            {
+                return version
+            }
+            console.log(version)
+            if (options.dontExit)
+            {
+                return
+            }
+            process.exit()
+        }
+        if (result[arg] === false || result[arg] === true)
+        {
+            result[arg] = !result[arg]
+        }
+        else if (!isNaN(Number(result[arg])))
+        {
+            result[arg] = parseFloat(expandedArgs.shift())
+        }
+        else if (_k_.in(arg,Object.keys(short)))
+        {
+            result[arg] = expandedArgs.shift()
+        }
+        else
+        {
+            addParamOrIgnore(arg)
+        }
+    }
+    return result
+}
+module.exports = parse
