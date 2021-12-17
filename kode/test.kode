@@ -304,7 +304,7 @@ krg = require '../'
         
         krg """
             shrt
-                nodefault  has no default
+                nodefault   has no default
             """ argv:[] ▸
             {}
         

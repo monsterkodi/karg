@@ -8,6 +8,7 @@
 
 require('klor').kolor.globalize()
 noon = require 'noon'
+kstr = require 'kstr'
 
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
@@ -54,12 +55,7 @@ error = (msg) ->
 #     returnLog:   help/version output is returned instead of logged (implies dontExit)
 
 parse = (config, options={}) ->
-    
-    pad = (s, l) ->
-        s = String s
-        while s.length < l then s += ' '
-        s
-    
+        
     if typeof(config) == 'string'        
         config = noon.parse config
     else
@@ -86,6 +82,9 @@ parse = (config, options={}) ->
                 s = s[1..].join ' '
             else
                 s = s[0]
+                if s[0] not in '*=-'
+                    o['?'] = s
+                    s = ''
             s = s.split ' '
 
             cvt = (s) ->
@@ -96,13 +95,15 @@ parse = (config, options={}) ->
             
             while s.length
                 if
-                    s[0] == '**'         ➜ o['**'] = true       s.shift(); break
-                    s[0] == '*'          ➜ o['*']  = true       s.shift(); break
+                    s[0] == ''           ➜ s.shift()
+                    s[0] == '**'         ➜ o['**'] = true       s.shift()
+                    s[0] == '*'          ➜ o['*']  = true       s.shift()
                     s[0] == '='          ➜ o['=']  = cvt s[1];  s.shift(); s.shift()
                     s[0].startsWith '--' ➜ o['--'] = s[0][2..] or '-'; s.shift()
                     s[0].startsWith '-'  ➜ o['-']  = s[0][1..] or '-'; s.shift()
-                                         ➜ o['?'] ?= ''; o['?'] += s.shift() + ' '
+                                         ➜ o['='] += ' ' + s.shift() if o['=']?
             [k,o]
+            
         else [k,v]
     
     for k,v of cfg
@@ -158,28 +159,28 @@ parse = (config, options={}) ->
     
     optionsText = ""
         
-    maxArgLength = 0
-    maxHelpLength = 0
+    maxLong = 0
+    maxHelp = 0
     
     for k,v of cfg
         
+        if long[k]? then maxLong = Math.max maxLong, long[k].length
+        if help[k]? then maxHelp = Math.max maxHelp, strip(help[k]).length
+                
+    for k,v of cfg
         sht = short[k]
         lng = long[k]
-        
-        if help[k]?
-            maxArgLength  = Math.max(maxArgLength, sht.length+lng.length)
-            maxHelpLength = Math.max(maxHelpLength, strip(help[k]).length)
-                
         if help[k]?
             df = switch result[k]
                 when false then red dim '✘'
                 when true  then green bold '✔'
                 else result[k]
             shtHelp = if sht != '' then "#{gray '-'}#{sht}" else '  '
+            lngHelp = if lng != '' then "#{gray '--'}#{kstr.rpad lng, maxLong}" else '  ' + kstr.pad '' maxLong
             optionsText += '\n'
-            optionsText += "    #{shtHelp}#{gray '  --'}#{lng}"
-            optionsText += gray bold "    #{pad '' Math.max(0,maxArgLength-sht.length-lng.length)} #{help[k]}"
-            optionsText += magenta   "    #{pad '' Math.max(0,maxHelpLength-strip(help[k]).length)} #{df}" if df?
+            optionsText += "    #{shtHelp} #{lngHelp}"
+            optionsText += gray bold "  #{kstr.rpad help[k], maxHelp}"
+            optionsText += magenta   "  #{df}" if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -193,8 +194,8 @@ parse = (config, options={}) ->
     helpText += "#{gray '['}#{bold yellow param}#{paramList and gray(' ... ]') or gray(']')}"
     helpText += '\n'
     if cfg[param]?['?']
-        helpText += yellow bold "\n#{pad '        '+param, maxArgLength+9} #{gray cfg[param]['?']}"
-        helpText += magenta("  #{pad '', Math.max(0,maxHelpLength-strip(cfg[param]['?']).length)} #{cfg[param]['=']}") if cfg[param]['=']? and not paramList
+        helpText += yellow bold "\n        #{param} #{gray cfg[param]['?']}"
+        helpText += magenta("  #{kstr.pad '', Math.max(0,maxHelp-strip(cfg[param]['?']).length)} #{cfg[param]['=']}") if cfg[param]['=']? and not paramList
         helpText += '\n'
             
     if optionsText.length

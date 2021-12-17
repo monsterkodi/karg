@@ -1,20 +1,21 @@
-// monsterkodi/kode 0.136.0
+// monsterkodi/kode 0.137.0
 
 var _k_ = {list: function (l) {return (l != null ? typeof l.length === 'number' ? l : [] : [])}, each_r: function (o) {return o instanceof Array ? [] : typeof o == 'string' ? o.split('') : {}}, in: function (a,l) {return (typeof l === 'string' && typeof a === 'string' && a.length ? '' : []).indexOf.call(l,a) >= 0}}
 
-var noon, expand, error, parse
+var noon, kstr, expand, error, parse
 
 require('klor').kolor.globalize()
 noon = require('noon')
+kstr = require('kstr')
 
 expand = function (l)
 {
     var a, match
 
     var list = _k_.list(l)
-    for (var _21_10_ = 0; _21_10_ < list.length; _21_10_++)
+    for (var _22_10_ = 0; _22_10_ < list.length; _22_10_++)
     {
-        a = list[_21_10_]
+        a = list[_22_10_]
         if (match = /^\-(\w\w+)$/.exec(a))
         {
             a = match[1].split('').map(function (i)
@@ -40,17 +41,8 @@ error = function (msg)
 
 parse = function (config, options = {})
 {
-    var pad, name, result, help, short, long, param, paramList, cfg, k, v, sht, lng, long2key, short2key, optionsText, maxArgLength, maxHelpLength, df, shtHelp, helpText, _205_19_, _206_21_, _208_21_, version, _211_28_, _212_23_, _231_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg, org
+    var name, result, help, short, long, param, paramList, cfg, k, v, sht, lng, long2key, short2key, optionsText, maxLong, maxHelp, df, shtHelp, lngHelp, helpText, _206_19_, _207_21_, _209_21_, version, _212_28_, _213_23_, _232_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg, org
 
-    pad = function (s, l)
-    {
-        s = String(s)
-        while (s.length < l)
-        {
-            s += ' '
-        }
-        return s
-    }
     if (typeof(config) === 'string')
     {
         config = noon.parse(config)
@@ -73,7 +65,7 @@ parse = function (config, options = {})
         {   
             var m = (function (k, v)
         {
-            var o, s, cvt, _104_53_
+            var o, s, cvt
 
             if (typeof(v) == 'string')
             {
@@ -87,6 +79,11 @@ parse = function (config, options = {})
                 else
                 {
                     s = s[0]
+                    if (!(_k_.in(s[0],'*=-')))
+                    {
+                        o['?'] = s
+                        s = ''
+                    }
                 }
                 s = s.split(' ')
                 cvt = function (s)
@@ -115,17 +112,19 @@ parse = function (config, options = {})
                 }
                 while (s.length)
                 {
-                    if (s[0] === '**')
+                    if (s[0] === '')
+                    {
+                        s.shift()
+                    }
+                    else if (s[0] === '**')
                     {
                         o['**'] = true
                         s.shift()
-                        break
                     }
                     else if (s[0] === '*')
                     {
                         o['*'] = true
                         s.shift()
-                        break
                     }
                     else if (s[0] === '=')
                     {
@@ -145,8 +144,10 @@ parse = function (config, options = {})
                     }
                     else
                     {
-                        o['?'] = ((_104_53_=o['?']) != null ? _104_53_ : '')
-                        o['?'] += s.shift() + ' '
+                        if ((o['='] != null))
+                        {
+                            o['='] += ' ' + s.shift()
+                        }
                     }
                 }
                 return [k,o]
@@ -263,18 +264,25 @@ broken key: ${bold(yellow(k))}`)
         return typeof o == 'string' ? r.join('') : r
     })(short)
     optionsText = ""
-    maxArgLength = 0
-    maxHelpLength = 0
+    maxLong = 0
+    maxHelp = 0
+    for (k in cfg)
+    {
+        v = cfg[k]
+        if ((long[k] != null))
+        {
+            maxLong = Math.max(maxLong,long[k].length)
+        }
+        if ((help[k] != null))
+        {
+            maxHelp = Math.max(maxHelp,strip(help[k]).length)
+        }
+    }
     for (k in cfg)
     {
         v = cfg[k]
         sht = short[k]
         lng = long[k]
-        if ((help[k] != null))
-        {
-            maxArgLength = Math.max(maxArgLength,sht.length + lng.length)
-            maxHelpLength = Math.max(maxHelpLength,strip(help[k]).length)
-        }
         if ((help[k] != null))
         {
             df = ((function ()
@@ -293,12 +301,13 @@ broken key: ${bold(yellow(k))}`)
 
             }).bind(this))()
             shtHelp = sht !== '' ? `${gray('-')}${sht}` : '  '
+            lngHelp = lng !== '' ? `${gray('--')}${kstr.rpad(lng,maxLong)}` : '  ' + kstr.pad('',maxLong)
             optionsText += '\n'
-            optionsText += `    ${shtHelp}${gray('  --')}${lng}`
-            optionsText += gray(bold(`    ${pad('',Math.max(0,maxArgLength - sht.length - lng.length))} ${help[k]}`))
+            optionsText += `    ${shtHelp} ${lngHelp}`
+            optionsText += gray(bold(`  ${kstr.rpad(help[k],maxHelp)}`))
             if ((df != null))
             {
-                optionsText += magenta(`    ${pad('',Math.max(0,maxHelpLength - strip(help[k]).length))} ${df}`)
+                optionsText += magenta(`  ${df}`)
             }
         }
     }
@@ -307,10 +316,10 @@ broken key: ${bold(yellow(k))}`)
     helpText += '\n'
     if ((cfg[param] != null ? cfg[param]['?'] : undefined))
     {
-        helpText += yellow(bold(`\n${pad('        ' + param,maxArgLength + 9)} ${gray(cfg[param]['?'])}`))
+        helpText += yellow(bold(`\n        ${param} ${gray(cfg[param]['?'])}`))
         if ((cfg[param]['='] != null) && !paramList)
         {
-            helpText += magenta(`  ${pad('',Math.max(0,maxHelpLength - strip(cfg[param]['?']).length))} ${cfg[param]['=']}`)
+            helpText += magenta(`  ${kstr.pad('',Math.max(0,maxHelp - strip(cfg[param]['?']).length))} ${cfg[param]['=']}`)
         }
         helpText += '\n'
     }
@@ -320,14 +329,14 @@ broken key: ${bold(yellow(k))}`)
         helpText += optionsText
         helpText += '\n\n'
     }
-    short2key['h'] = ((_205_19_=short2key['h']) != null ? _205_19_ : 'help')
-    long2key['help'] = ((_206_21_=long2key['help']) != null ? _206_21_ : 'help')
+    short2key['h'] = ((_206_19_=short2key['h']) != null ? _206_19_ : 'help')
+    long2key['help'] = ((_207_21_=long2key['help']) != null ? _207_21_ : 'help')
     if ((config.version != null))
     {
         version = config.version
         delete config.version
-        long2key['version'] = ((_211_28_=long2key['version']) != null ? _211_28_ : 'version')
-        short2key['V'] = ((_212_23_=short2key['V']) != null ? _212_23_ : 'version')
+        long2key['version'] = ((_212_28_=long2key['version']) != null ? _212_28_ : 'version')
+        short2key['V'] = ((_213_23_=short2key['V']) != null ? _213_23_ : 'version')
     }
     delete config[name]
     if (Object.keys(config).length)
@@ -335,7 +344,7 @@ broken key: ${bold(yellow(k))}`)
         helpText += noon.stringify(config,{maxalign:16,colors:{key:gray,string:white}})
         helpText += '\n'
     }
-    options.ignoreArgs = ((_231_23_=options.ignoreArgs) != null ? _231_23_ : 2)
+    options.ignoreArgs = ((_232_23_=options.ignoreArgs) != null ? _232_23_ : 2)
     if (options.argv)
     {
         argv = options.argv

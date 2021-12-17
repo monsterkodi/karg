@@ -1,28 +1,29 @@
 {
-    "name": "karg",
-    "version": "2.3.0",
-    "description": "option parser",
-    "files": [
-        "js/karg.js"
-    ],
-    "main": "js/karg.js",
-    "keywords": [
-        "option",
-        "parser"
-    ],
-    "author": "monsterkodi",
-    "license": "Unlicense",
-    "repository": "github:monsterkodi/karg",
-    "scripts": {
-        "build": "./node_modules/.bin/kode -Ho js kode/karg.kode",
-        "watch": "./node_modules/.bin/kode -wt kode/test.kode kode/karg.kode",
-        "test": "./node_modules/.bin/kode -t kode/test.kode"
-    },
-    "dependencies": {
-        "klor": "monsterkodi/klor",
-        "noon": "monsterkodi/noon"
-    },
-    "devDependencies": {
-        "kode": "monsterkodi/kode"
-    }
+  "name": "karg",
+  "version": "2.4.0",
+  "description": "option parser",
+  "files": [
+    "js/karg.js"
+  ],
+  "main": "js/karg.js",
+  "keywords": [
+    "option",
+    "parser"
+  ],
+  "author": "monsterkodi",
+  "license": "Unlicense",
+  "repository": "github:monsterkodi/karg",
+  "scripts": {
+    "build": "./node_modules/.bin/kode -Ho js kode/karg.kode",
+    "watch": "./node_modules/.bin/kode -wt kode/test.kode kode/karg.kode",
+    "test": "./node_modules/.bin/kode -t kode/test.kode"
+  },
+  "dependencies": {
+    "klor": "monsterkodi/klor",
+    "kstr": "^0.13.0",
+    "noon": "monsterkodi/noon"
+  },
+  "devDependencies": {
+    "kode": "monsterkodi/kode"
+  }
 }
