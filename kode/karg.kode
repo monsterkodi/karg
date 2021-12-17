@@ -88,13 +88,19 @@ parse = (config, options={}) ->
                 s = s[0]
             s = s.split ' '
 
+            cvt = (s) ->
+                switch s
+                    'true''yes' ➜ true
+                    'false''no' ➜ false
+                                ➜ if s is num then parseFloat s else s
+            
             while s.length
                 if
                     s[0] == '**'         ➜ o['**'] = true       s.shift(); break
                     s[0] == '*'          ➜ o['*']  = true       s.shift(); break
-                    s[0] == '='          ➜ o['=']  = s[1];      s.shift(); s.shift()
-                    s[0].startsWith '--' ➜ o['--'] = s[0][2..]; s.shift()
-                    s[0].startsWith '-'  ➜ o['-']  = s[0][1..]; s.shift()
+                    s[0] == '='          ➜ o['=']  = cvt s[1];  s.shift(); s.shift()
+                    s[0].startsWith '--' ➜ o['--'] = s[0][2..] or '-'; s.shift()
+                    s[0].startsWith '-'  ➜ o['-']  = s[0][1..] or '-'; s.shift()
                                          ➜ o['?'] ?= ''; o['?'] += s.shift() + ' '
             [k,o]
         else [k,v]
@@ -110,12 +116,12 @@ parse = (config, options={}) ->
         
         if v['=']? then result[k] = v['=']
         
-        sht = k[0]                    # default for short is first letter of key
-        lng = k                       # default for long  is key
-        sht = v['-']  if v['-']       # override short if specified
-        lng = v['--'] if v['--']      # override long if specified
-        sht = '' if sht == '-'        # disable short if -
-        lng = '' if lng in ['-''--']  # disable long if -- 
+        sht = k[0]                   # default for short is first letter of key
+        lng = k                      # default for long  is key
+        sht = v['-']  if v['-']      # override short if specified
+        lng = v['--'] if v['--']     # override long if specified
+        sht = '' if sht in ['-']     # disable short if -
+        lng = '' if lng in ['-''--'] # disable long if -- 
         
         if Array.isArray v
             if '*' in v

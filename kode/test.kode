@@ -93,6 +93,92 @@ krg = require '../'
             """ argv:'--int 777s'.split ' ' ▸
             int:777
         
+    #  0000000  000   000   0000000   00000000   000000000  
+    # 000       000   000  000   000  000   000     000     
+    # 0000000   000000000  000   000  0000000       000     
+    #      000  000   000  000   000  000   000     000     
+    # 0000000   000   000   0000000   000   000     000     
+    
+    ▸ number short
+        
+        krg """
+            shrt
+                float     = 123.567
+            """ argv:[] ▸
+            float:123.567
+        
+        krg """
+            shrt
+                float     = 0.0
+            """ argv:[] ▸
+            float:0
+
+        krg """
+            shrt
+                float   help text  = 123.567
+            """ argv:[] ▸
+            float:123.567
+
+        krg """
+            shrt
+                float  = 123.567
+            """ argv:'-f 666.7'.split ' ' ▸
+            float:666.7
+        
+        krg """
+            shrt
+                float  = 123.5
+            """ argv:'--float 777.6'.split ' ' ▸
+            float:777.6
+    
+        krg """
+            shrt
+                int    = 123
+            """ argv:[] ▸
+            int:123
+        
+        krg """
+            shrt
+                int    = 0
+            """ argv:[] ▸
+            int:0
+
+        krg """
+            shrt
+                int    help text  = 123
+            """ argv:[] ▸
+            int:123
+
+        krg """
+            shrt
+                int    help text  = 123
+            """ argv:'-i 666.777'.split ' ' ▸
+            int:666.777
+        
+        krg """
+            shrt
+                int   = 123
+            """ argv:'-i 666'.split ' ' ▸
+            int:666
+        
+        krg """
+            shrt
+                int   = 123
+            """ argv:'--int 777'.split ' ' ▸
+            int:777
+
+        krg """
+            shrt
+                int   = 123m
+            """ argv:'--int 777'.split ' ' ▸
+            int:'777'
+
+        krg """
+            shrt
+                int   = 123
+            """ argv:'--int 777s'.split ' ' ▸
+            int:777
+            
     # 0000000     0000000    0000000   000      
     # 000   000  000   000  000   000  000      
     # 0000000    000   000  000   000  000      
@@ -124,13 +210,51 @@ krg = require '../'
                 bool  . = false
             """ argv:['-b'] ▸
             bool:true
-        
+                    
         krg """
             test
                 bool  . = false
             """ argv:['--bool'] ▸
             bool:true
+
+    #  0000000  000   000   0000000   00000000   000000000  
+    # 000       000   000  000   000  000   000     000     
+    # 0000000   000000000  000   000  0000000       000     
+    #      000  000   000  000   000  000   000     000     
+    # 0000000   000   000   0000000   000   000     000     
+    
+    ▸ bool short            
         
+        krg """
+            shrt
+                bool    = true
+            """ argv:[] ▸
+            bool:true
+        
+        krg """
+            shrt
+                bool    = false
+            """ argv:[] ▸
+            bool:false
+
+        krg """
+            shrt
+                bool   help text  = true
+            """ argv:[] ▸
+            bool:true
+
+        krg """
+            shrt
+                bool  = false
+            """ argv:['-b'] ▸
+            bool:true
+        
+        krg """
+            shrt
+                bool  = false
+            """ argv:['--bool'] ▸
+            bool:true
+            
         
     # 000   000   0000000         0000000    00000000  00000000   0000000   000   000  000      000000000  
     # 0000  000  000   000        000   000  000       000       000   000  000   000  000         000     
@@ -170,6 +294,38 @@ krg = require '../'
             """ argv:['-n' 'true'] ▸
             nodefault:'true'
 
+    #  0000000  000   000   0000000   00000000   000000000  
+    # 000       000   000  000   000  000   000     000     
+    # 0000000   000000000  000   000  0000000       000     
+    #      000  000   000  000   000  000   000     000     
+    # 0000000   000   000   0000000   000   000     000     
+    
+    ▸ no default short
+        
+        krg """
+            shrt
+                nodefault  has no default
+            """ argv:[] ▸
+            {}
+        
+        krg """
+            shrt
+                nodefault   has no default
+            """ argv:['--nodefault' 'test' '-n' 'foo'] ▸
+            nodefault:'foo'
+        
+        krg """
+            shrt
+                nodefault   has no default  
+            """ argv:['-n' '123'] ▸
+            nodefault:'123'
+
+        krg """
+            shrt
+                nodefault   has no default  
+            """ argv:['-n' 'true'] ▸
+            nodefault:'true'
+            
     # 000   000   0000000          0000000  000   000   0000000   00000000   000000000  
     # 0000  000  000   000        000       000   000  000   000  000   000     000     
     # 000 0 000  000   000        0000000   000000000  000   000  0000000       000     
@@ -198,7 +354,29 @@ krg = require '../'
                 noshort  . = true . - -
             """ argv:['--noshort'] ▸ (a) -> a.noshort == false
 
-        
+    ▸ no short short
+                
+        krg """
+            shrt
+                noshort   = true -
+            """ argv:['-n'] ▸ 
+            noshort:true
+            __ignored: ['-n']
+            
+        krg """
+            shrt
+                noshort   = false -
+            """ argv:['-n'] ▸ 
+            noshort:false
+            __ignored: ['-n']
+
+        krg """
+            shrt
+                noshort   = no - --
+            """ argv:['-n' '--noshort'] ▸ 
+            noshort:false
+            __ignored: ['-n' '--noshort']
+            
     # 00000000    0000000   00000000    0000000   00     00   0000000  
     # 000   000  000   000  000   000  000   000  000   000  000       
     # 00000000   000000000  0000000    000000000  000000000  0000000   
@@ -249,17 +427,31 @@ krg = require '../'
             """ argv:['a' 'b' '3'] ▸
             param: '3'
             
+    ▸ params short            
+            
         krg """
-            short
+            shrt
                 files    **
             """ argv:['d' 'e' 'f'] ▸
             files: ['d' 'e' 'f']
 
         krg """
-            short
+            shrt
                 files  some info about files  **
             """ argv:['d' 'e' 'f'] ▸
             files: ['d' 'e' 'f']
+            
+        krg """
+            shrt
+                param   single param  *
+            """ argv:['a' 'b' '3'] ▸
+            param: '3'
+
+        krg """
+            shrt
+                param   *
+            """ argv:['a' 'b' '3'] ▸
+            param: '3'
             
     #  0000000   0000000    0000000  00000000  
     # 000       000   000  000       000       
@@ -318,7 +510,7 @@ krg = require '../'
             test
                 Volt  . = should override -V for version
             version  2.3.4
-            """ argv:['-V' '0'], returnLog:true ▸
+            """ argv:['-V' '0'] ▸
             Volt:'0'
         
     # 000   000  00000000  000      00000000   
@@ -341,6 +533,8 @@ krg = require '../'
         """ argv:['--help'], returnLog:true ▸ (a) -> 
             'usage:  test' in a
         
+    ▸ help short
+            
         kolor.strip krg """
             shortconfig
                 arg     info about arg  = false

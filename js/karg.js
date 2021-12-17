@@ -40,7 +40,7 @@ error = function (msg)
 
 parse = function (config, options = {})
 {
-    var pad, name, result, help, short, long, param, paramList, cfg, k, v, sht, lng, long2key, short2key, optionsText, maxArgLength, maxHelpLength, df, shtHelp, helpText, _199_19_, _200_21_, _202_21_, version, _205_28_, _206_23_, _225_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg, org
+    var pad, name, result, help, short, long, param, paramList, cfg, k, v, sht, lng, long2key, short2key, optionsText, maxArgLength, maxHelpLength, df, shtHelp, helpText, _205_19_, _206_21_, _208_21_, version, _211_28_, _212_23_, _231_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg, org
 
     pad = function (s, l)
     {
@@ -73,7 +73,7 @@ parse = function (config, options = {})
         {   
             var m = (function (k, v)
         {
-            var o, s, _98_53_
+            var o, s, cvt, _104_53_
 
             if (typeof(v) == 'string')
             {
@@ -89,6 +89,30 @@ parse = function (config, options = {})
                     s = s[0]
                 }
                 s = s.split(' ')
+                cvt = function (s)
+                {
+                    switch (s)
+                    {
+                        case 'true':
+                        case 'yes':
+                            return true
+
+                        case 'false':
+                        case 'no':
+                            return false
+
+                        default:
+                            if (!isNaN(s) && !isNaN(parseFloat(s)) && isFinite(s))
+                        {
+                            return parseFloat(s)
+                        }
+                        else
+                        {
+                            return s
+                        }
+                    }
+
+                }
                 while (s.length)
                 {
                     if (s[0] === '**')
@@ -105,23 +129,23 @@ parse = function (config, options = {})
                     }
                     else if (s[0] === '=')
                     {
-                        o['='] = s[1]
+                        o['='] = cvt(s[1])
                         s.shift()
                         s.shift()
                     }
                     else if (s[0].startsWith('--'))
                     {
-                        o['--'] = s[0].slice(2)
+                        o['--'] = s[0].slice(2) || '-'
                         s.shift()
                     }
                     else if (s[0].startsWith('-'))
                     {
-                        o['-'] = s[0].slice(1)
+                        o['-'] = s[0].slice(1) || '-'
                         s.shift()
                     }
                     else
                     {
-                        o['?'] = ((_98_53_=o['?']) != null ? _98_53_ : '')
+                        o['?'] = ((_104_53_=o['?']) != null ? _104_53_ : '')
                         o['?'] += s.shift() + ' '
                     }
                 }
@@ -162,7 +186,7 @@ broken key: ${bold(yellow(k))}`)
         {
             lng = v['--']
         }
-        if (sht === '-')
+        if (_k_.in(sht,['-']))
         {
             sht = ''
         }
@@ -296,14 +320,14 @@ broken key: ${bold(yellow(k))}`)
         helpText += optionsText
         helpText += '\n\n'
     }
-    short2key['h'] = ((_199_19_=short2key['h']) != null ? _199_19_ : 'help')
-    long2key['help'] = ((_200_21_=long2key['help']) != null ? _200_21_ : 'help')
+    short2key['h'] = ((_205_19_=short2key['h']) != null ? _205_19_ : 'help')
+    long2key['help'] = ((_206_21_=long2key['help']) != null ? _206_21_ : 'help')
     if ((config.version != null))
     {
         version = config.version
         delete config.version
-        long2key['version'] = ((_205_28_=long2key['version']) != null ? _205_28_ : 'version')
-        short2key['V'] = ((_206_23_=short2key['V']) != null ? _206_23_ : 'version')
+        long2key['version'] = ((_211_28_=long2key['version']) != null ? _211_28_ : 'version')
+        short2key['V'] = ((_212_23_=short2key['V']) != null ? _212_23_ : 'version')
     }
     delete config[name]
     if (Object.keys(config).length)
@@ -311,7 +335,7 @@ broken key: ${bold(yellow(k))}`)
         helpText += noon.stringify(config,{maxalign:16,colors:{key:gray,string:white}})
         helpText += '\n'
     }
-    options.ignoreArgs = ((_225_23_=options.ignoreArgs) != null ? _225_23_ : 2)
+    options.ignoreArgs = ((_231_23_=options.ignoreArgs) != null ? _231_23_ : 2)
     if (options.argv)
     {
         argv = options.argv
