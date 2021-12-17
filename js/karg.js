@@ -1,19 +1,20 @@
-// monsterkodi/kode 0.133.0
+// monsterkodi/kode 0.136.0
 
-var _k_ = {list: function (l) {return (l != null ? typeof l.length === 'number' ? l : [] : [])}, in: function (a,l) {return (typeof l === 'string' && typeof a === 'string' && a.length ? '' : []).indexOf.call(l,a) >= 0}}
+var _k_ = {list: function (l) {return (l != null ? typeof l.length === 'number' ? l : [] : [])}, each_r: function (o) {return o instanceof Array ? [] : typeof o == 'string' ? o.split('') : {}}, in: function (a,l) {return (typeof l === 'string' && typeof a === 'string' && a.length ? '' : []).indexOf.call(l,a) >= 0}}
 
-var expand, error, parse
+var noon, expand, error, parse
 
 require('klor').kolor.globalize()
+noon = require('noon')
 
 expand = function (l)
 {
     var a, match
 
     var list = _k_.list(l)
-    for (var _20_10_ = 0; _20_10_ < list.length; _20_10_++)
+    for (var _21_10_ = 0; _21_10_ < list.length; _21_10_++)
     {
-        a = list[_20_10_]
+        a = list[_21_10_]
         if (match = /^\-(\w\w+)$/.exec(a))
         {
             a = match[1].split('').map(function (i)
@@ -39,7 +40,7 @@ error = function (msg)
 
 parse = function (config, options = {})
 {
-    var pad, noon_parse, name, result, help, short, long, param, paramList, k, v, sht, optionsText, maxArgLength, maxHelpLength, lng, df, shtHelp, helpText, _164_18_, _167_21_, version, _171_29_, noon_stringify, _192_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg
+    var pad, name, result, help, short, long, param, paramList, cfg, k, v, sht, lng, long2key, short2key, optionsText, maxArgLength, maxHelpLength, df, shtHelp, helpText, _195_19_, _196_21_, _198_21_, version, _201_28_, _202_23_, _221_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg, org
 
     pad = function (s, l)
     {
@@ -52,8 +53,7 @@ parse = function (config, options = {})
     }
     if (typeof(config) === 'string')
     {
-        noon_parse = require('noon/js/parse')
-        config = noon_parse(config)
+        config = noon.parse(config)
     }
     else
     {
@@ -66,9 +66,69 @@ parse = function (config, options = {})
     long = {}
     param = ''
     paramList = false
-    for (k in config[name])
+    cfg = config[name]
+    cfg = (function (o) {
+        var r = _k_.each_r(o)
+        for (var k in o)
+        {   
+            var m = (function (k, v)
+        {
+            var o, s
+
+            if (typeof(v) == 'string')
+            {
+                o = {}
+                s = v.split(/\s\s+/)
+                if (s.length > 1)
+                {
+                    o['?'] = s[0]
+                    s = s.slice(1).join(' ')
+                }
+                else
+                {
+                    s = s[0]
+                }
+                s = s.split(' ')
+                while (s.length)
+                {
+                    if (s[0] === '=')
+                    {
+                        o['='] = s[1]
+                        s.shift()
+                        s.shift()
+                    }
+                    else if (s[0].startsWith('--'))
+                    {
+                        o['--'] = s[0].slice(2)
+                        s.shift()
+                    }
+                    else if (s[0].startsWith('-'))
+                    {
+                        o['-'] = s[0].slice(1)
+                        s.shift()
+                    }
+                    else
+                    {
+                        o['?'] = s.shift()
+                    }
+                }
+                return [k,o]
+            }
+            else
+            {
+                return [k,v]
+            }
+        })(k, o[k])
+            if (m != null && m[0] != null)
+            {
+                r[m[0]] = m[1]
+            }
+        }
+        return typeof o == 'string' ? r.join('') : r
+    })(cfg)
+    for (k in cfg)
     {
-        v = config[name][k]
+        v = cfg[k]
         if (0 <= k.indexOf(' '))
         {
             console.error(`wrong karg setup: ${bold("keys can't contain spaces!")}
@@ -80,13 +140,22 @@ broken key: ${bold(yellow(k))}`)
             result[k] = v['=']
         }
         sht = k[0]
+        lng = k
         if (v['-'])
         {
             sht = v['-']
         }
+        if (v['--'])
+        {
+            lng = v['--']
+        }
         if (sht === '-')
         {
             sht = ''
+        }
+        if (_k_.in(lng,['-','--']))
+        {
+            lng = ''
         }
         if (Array.isArray(v))
         {
@@ -98,15 +167,12 @@ broken key: ${bold(yellow(k))}`)
             {
                 param = k
                 paramList = true
-                result[param] = []
+                result[k] = []
             }
             else
             {
                 short[k] = sht
-                if (sht !== '')
-                {
-                    long[sht] = k
-                }
+                long[k] = lng
             }
         }
         else
@@ -119,39 +185,64 @@ broken key: ${bold(yellow(k))}`)
             {
                 param = k
                 paramList = true
-                result[param] = []
+                result[k] = []
             }
             else
             {
                 short[k] = sht
-                if (sht !== '')
-                {
-                    long[sht] = k
-                }
+                long[k] = lng
                 help[k] = v['?']
             }
         }
     }
+    long2key = (function (o) {
+        var r = _k_.each_r(o)
+        for (var k in o)
+        {   
+            var m = (function (k, v)
+        {
+            return [v,k]
+        })(k, o[k])
+            if (m != null && m[0] != null)
+            {
+                r[m[0]] = m[1]
+            }
+        }
+        return typeof o == 'string' ? r.join('') : r
+    })(long)
+    short2key = (function (o) {
+        var r = _k_.each_r(o)
+        for (var k in o)
+        {   
+            var m = (function (k, v)
+        {
+            return [v,k]
+        })(k, o[k])
+            if (m != null && m[0] != null)
+            {
+                r[m[0]] = m[1]
+            }
+        }
+        return typeof o == 'string' ? r.join('') : r
+    })(short)
     optionsText = ""
     maxArgLength = 0
     maxHelpLength = 0
-    for (lng in short)
+    for (k in cfg)
     {
-        sht = short[lng]
-        if ((help[lng] != null))
+        v = cfg[k]
+        sht = short[k]
+        lng = long[k]
+        if ((help[k] != null))
         {
             maxArgLength = Math.max(maxArgLength,sht.length + lng.length)
-            maxHelpLength = Math.max(maxHelpLength,strip(help[lng]).length)
+            maxHelpLength = Math.max(maxHelpLength,strip(help[k]).length)
         }
-    }
-    for (lng in short)
-    {
-        sht = short[lng]
-        if ((help[lng] != null))
+        if ((help[k] != null))
         {
             df = ((function ()
             {
-                switch (result[lng])
+                switch (result[k])
                 {
                     case false:
                         return red(dim('✘'))
@@ -160,29 +251,29 @@ broken key: ${bold(yellow(k))}`)
                         return green(bold('✔'))
 
                     default:
-                        return result[lng]
+                        return result[k]
                 }
 
             }).bind(this))()
             shtHelp = sht !== '' ? `${gray('-')}${sht}` : '  '
             optionsText += '\n'
             optionsText += `    ${shtHelp}${gray('  --')}${lng}`
-            optionsText += gray(bold(`    ${pad('',Math.max(0,maxArgLength - sht.length - lng.length))} ${help[lng]}`))
+            optionsText += gray(bold(`    ${pad('',Math.max(0,maxArgLength - sht.length - lng.length))} ${help[k]}`))
             if ((df != null))
             {
-                optionsText += magenta(`    ${pad('',Math.max(0,maxHelpLength - strip(help[lng]).length))} ${df}`)
+                optionsText += magenta(`    ${pad('',Math.max(0,maxHelpLength - strip(help[k]).length))} ${df}`)
             }
         }
     }
     helpText = `\n${gray('usage:')}  ${bold(name)} `
     helpText += `${gray('[')}${bold(yellow(param))}${paramList && gray(' ... ]') || gray(']')}`
     helpText += '\n'
-    if ((config[name][param] != null ? config[name][param]['?'] : undefined))
+    if ((cfg[param] != null ? cfg[param]['?'] : undefined))
     {
-        helpText += yellow(bold(`\n${pad('        ' + param,maxArgLength + 9)} ${gray(config[name][param]['?'])}`))
-        if ((config[name][param]['='] != null) && !paramList)
+        helpText += yellow(bold(`\n${pad('        ' + param,maxArgLength + 9)} ${gray(cfg[param]['?'])}`))
+        if ((cfg[param]['='] != null) && !paramList)
         {
-            helpText += magenta(`  ${pad('',Math.max(0,maxHelpLength - strip(config[name][param]['?']).length))} ${config[name][param]['=']}`)
+            helpText += magenta(`  ${pad('',Math.max(0,maxHelpLength - strip(cfg[param]['?']).length))} ${cfg[param]['=']}`)
         }
         helpText += '\n'
     }
@@ -192,26 +283,22 @@ broken key: ${bold(yellow(k))}`)
         helpText += optionsText
         helpText += '\n\n'
     }
-    short['help'] = ((_164_18_=short['help']) != null ? _164_18_ : 'h')
-    long['h'] = 'help'
+    short2key['h'] = ((_195_19_=short2key['h']) != null ? _195_19_ : 'help')
+    long2key['help'] = ((_196_21_=long2key['help']) != null ? _196_21_ : 'help')
     if ((config.version != null))
     {
         version = config.version
         delete config.version
-        if (!long['V'])
-        {
-            short['version'] = ((_171_29_=short['version']) != null ? _171_29_ : 'V')
-            long['V'] = 'version'
-        }
+        long2key['version'] = ((_201_28_=long2key['version']) != null ? _201_28_ : 'version')
+        short2key['V'] = ((_202_23_=short2key['V']) != null ? _202_23_ : 'version')
     }
     delete config[name]
     if (Object.keys(config).length)
     {
-        noon_stringify = require('noon/js/stringify')
-        helpText += noon_stringify(config,{maxalign:16,colors:{key:gray,string:white}})
+        helpText += noon.stringify(config,{maxalign:16,colors:{key:gray,string:white}})
         helpText += '\n'
     }
-    options.ignoreArgs = ((_192_23_=options.ignoreArgs) != null ? _192_23_ : 2)
+    options.ignoreArgs = ((_221_23_=options.ignoreArgs) != null ? _221_23_ : 2)
     if (options.argv)
     {
         argv = options.argv
@@ -253,18 +340,22 @@ broken key: ${bold(yellow(k))}`)
     }
     while (arg = expandedArgs.shift())
     {
+        org = arg
         if (arg.substr(0,2) === '--')
         {
-            arg = arg.substr(2)
+            if (!(arg = long2key[arg.substr(2)]))
+            {
+                addIgnored(org)
+                continue
+            }
         }
         else if (arg[0] === '-')
         {
-            if (!long[arg.substr(1)])
+            if (!(arg = short2key[arg.substr(1)]))
             {
-                addIgnored(arg)
+                addIgnored(org)
                 continue
             }
-            arg = long[arg.substr(1)]
         }
         else
         {
@@ -301,13 +392,17 @@ broken key: ${bold(yellow(k))}`)
         {
             result[arg] = !result[arg]
         }
-        else if (!isNaN(Number(result[arg])))
+        else if (!isNaN(result[arg]) && !isNaN(parseFloat(result[arg])) && isFinite(result[arg]))
         {
             result[arg] = parseFloat(expandedArgs.shift())
         }
-        else if (_k_.in(arg,Object.keys(short)))
+        else if (_k_.in(arg,Object.keys(short2key)))
         {
-            result[arg] = expandedArgs.shift()
+            result[short2key[arg]] = expandedArgs.shift()
+        }
+        else if (_k_.in(arg,Object.keys(long2key)))
+        {
+            result[long2key[arg]] = expandedArgs.shift()
         }
         else
         {

@@ -1,10 +1,11 @@
 
+noon = require 'noon'
 process = require 'process'
 process.argv = process.argv.concat ['--no-colors']
 { kolor } = require 'klor'
 krg = require '../' 
 
-▸ config
+▸ karg
 
     # 000   000  000   000  00     00  0000000    00000000  00000000   
     # 0000  000  000   000  000   000  000   000  000       000   000  
@@ -147,7 +148,7 @@ krg = require '../'
         
         krg """
             test
-                nodefault
+                lonelyarg
             """ argv:[] ▸
             {}
 
@@ -304,7 +305,7 @@ krg = require '../'
         krg """
             test
                 Volt  . = should override -V for version
-            version  0.1.2
+            version  2.3.4
             """ argv:['-V' '0'], returnLog:true ▸
             Volt:'0'
         
@@ -319,11 +320,25 @@ krg = require '../'
         kolor.strip krg """
             test
                 arg  . = false
-        """ argv:['-h'], returnLog:true ▸ (a) -> 'usage:  test' in a
+            """ argv:['-h'], returnLog:true ▸ (a) -> 
+            'usage:  test' in a
                             
         kolor.strip krg """
             test
                 arg  . = false
-        """ argv:['--help'], returnLog:true ▸ (a) -> 'usage:  test' in a
+        """ argv:['--help'], returnLog:true ▸ (a) -> 
+            'usage:  test' in a
+        
+        kolor.strip krg """
+            shortconfig
+                arg     info about arg  = false
+                noInfo                  = true  
+                noShort                 = true -
+                noLong                  = true --
+                newLong                 = true --long
+                newShort                = true -s
+                newLongShort            = true -S --LS
+        """ argv:['--help'], returnLog:true ▸ (a) -> 
+            'usage:  shortconfig' in a
         
         

@@ -7,7 +7,8 @@
 ###
 
 require('klor').kolor.globalize()
-    
+noon = require 'noon'
+
 ###
 00000000  000   000  00000000    0000000   000   000  0000000  
 000        000 000   000   000  000   000  0000  000  000   000
@@ -59,9 +60,8 @@ parse = (config, options={}) ->
         while s.length < l then s += ' '
         s
     
-    if typeof(config) == 'string'
-        noon_parse = require 'noon/js/parse'
-        config = noon_parse config
+    if typeof(config) == 'string'        
+        config = noon.parse config
     else
         config = Object.assign {}, config
             
@@ -72,9 +72,31 @@ parse = (config, options={}) ->
     long   = {} # maps shortcut keys to keys
     param  = '' # name of non-option parameters
     paramList = false
+   
+    cfg = config[name]
     
-    for k,v of config[name]
+    cfg = cfg each (k,v) ->
         
+        if v is 'string'
+            o = {}
+            s = v.split /\s\s+/
+            if s.length > 1
+                o['?'] = s[0]
+                s = s[1..].join ' '
+            else
+                s = s[0]
+            s = s.split ' '
+            while s.length
+                if
+                    s[0] == '='          ➜ o['=']  = s[1];      s.shift(); s.shift()
+                    s[0].startsWith '--' ➜ o['--'] = s[0][2..]; s.shift()
+                    s[0].startsWith '-'  ➜ o['-']  = s[0][1..]; s.shift()
+                                         ➜ o['?']  =            s.shift()
+            [k,o]
+        else [k,v]
+    
+    for k,v of cfg
+    
         if 0 <= k.indexOf ' '
             error """
             wrong karg setup: #{bold "keys can't contain spaces!"}
@@ -84,9 +106,12 @@ parse = (config, options={}) ->
         
         if v['=']? then result[k] = v['=']
         
-        sht = k[0]
-        if v['-'] then sht = v['-']
-        if sht == '-' then sht = ''
+        sht = k[0]                    # default for short is first letter of key
+        lng = k                       # default for long  is key
+        sht = v['-']  if v['-']       # override short if specified
+        lng = v['--'] if v['--']      # override long if specified
+        sht = '' if sht == '-'        # disable short if -
+        lng = '' if lng in ['-''--']  # disable long if -- 
         
         if Array.isArray v
             if '*' in v
@@ -94,21 +119,24 @@ parse = (config, options={}) ->
             else if '**' in v
                 param = k
                 paramList = true
-                result[param] = []
+                result[k] = []
             else
-                short[k]  = sht
-                long[sht] = k if sht != ''
+                short[k] = sht
+                long[k]  = lng
         else
             if '*' in Object.keys v
                 param = k
             else if '**' in Object.keys v
                 param = k
                 paramList = true
-                result[param] = []
+                result[k] = []
             else
-                short[k]  = sht
-                long[sht] = k if sht != ''
-                help[k]   = v['?']
+                short[k] = sht
+                long[k]  = lng
+                help[k]  = v['?']
+                
+    long2key  = long  each (k,v) -> [v,k]
+    short2key = short each (k,v) -> [v,k]
 
     ###
      0000000   00000000   000000000  000   0000000   000   000   0000000
@@ -122,22 +150,26 @@ parse = (config, options={}) ->
         
     maxArgLength = 0
     maxHelpLength = 0
-    for lng,sht of short
-        if help[lng]?
+    
+    for k,v of cfg
+        
+        sht = short[k]
+        lng = long[k]
+        
+        if help[k]?
             maxArgLength  = Math.max(maxArgLength, sht.length+lng.length)
-            maxHelpLength = Math.max(maxHelpLength, strip(help[lng]).length)
-            
-    for lng,sht of short
-        if help[lng]?
-            df = switch result[lng]
+            maxHelpLength = Math.max(maxHelpLength, strip(help[k]).length)
+                
+        if help[k]?
+            df = switch result[k]
                 when false then red dim '✘'
                 when true  then green bold '✔'
-                else result[lng]
+                else result[k]
             shtHelp = if sht != '' then "#{gray '-'}#{sht}" else '  '
             optionsText += '\n'
             optionsText += "    #{shtHelp}#{gray '  --'}#{lng}"
-            optionsText += gray bold "    #{pad '' Math.max(0,maxArgLength-sht.length-lng.length)} #{help[lng]}"
-            optionsText += magenta   "    #{pad '' Math.max(0,maxHelpLength-strip(help[lng]).length)} #{df}" if df?
+            optionsText += gray bold "    #{pad '' Math.max(0,maxArgLength-sht.length-lng.length)} #{help[k]}"
+            optionsText += magenta   "    #{pad '' Math.max(0,maxHelpLength-strip(help[k]).length)} #{df}" if df?
 
     ###
     000   000  00000000  000      00000000 
@@ -148,12 +180,11 @@ parse = (config, options={}) ->
     ###
     
     helpText  = "\n#{gray 'usage:'}  #{bold name} "
-    # helpText += "#{gray '['}#{bold gray 'options'}#{gray ']'} " if 1 < Object.keys(short)
     helpText += "#{gray '['}#{bold yellow param}#{paramList and gray(' ... ]') or gray(']')}"
     helpText += '\n'
-    if config[name][param]?['?']
-        helpText += yellow bold "\n#{pad '        '+param, maxArgLength+9} #{gray config[name][param]['?']}"
-        helpText += magenta("  #{pad '', Math.max(0,maxHelpLength-strip(config[name][param]['?']).length)} #{config[name][param]['=']}") if config[name][param]['=']? and not paramList
+    if cfg[param]?['?']
+        helpText += yellow bold "\n#{pad '        '+param, maxArgLength+9} #{gray cfg[param]['?']}"
+        helpText += magenta("  #{pad '', Math.max(0,maxHelpLength-strip(cfg[param]['?']).length)} #{cfg[param]['=']}") if cfg[param]['=']? and not paramList
         helpText += '\n'
             
     if optionsText.length
@@ -161,20 +192,18 @@ parse = (config, options={}) ->
         helpText += optionsText
         helpText += '\n\n'
     
-    short['help'] ?= 'h'
-    long['h'] = 'help'
+    short2key['h'] ?= 'help'
+    long2key['help'] ?= 'help'
     
     if config.version?
         version = config.version
         delete config.version
-        if not long['V']
-            short['version'] ?= 'V'
-            long['V'] = 'version' 
+        long2key['version'] ?= 'version' 
+        short2key['V'] ?= 'version'
         
     delete config[name]
-    if Object.keys(config).length 
-        noon_stringify = require 'noon/js/stringify'
-        helpText += noon_stringify config, 
+    if Object.keys(config).length # append remaining keys as help text
+        helpText += noon.stringify config, 
             maxalign: 16
             colors: 
                 key:     gray
@@ -213,16 +242,18 @@ parse = (config, options={}) ->
             addParam arg
         else
             addIgnored arg
-    
+                
     while arg = expandedArgs.shift()
-            
+        
+        org = arg
         if arg.substr(0,2) == '--'
-            arg = arg.substr 2
-        else if arg[0] == '-'
-            if not long[arg.substr 1]
-                addIgnored arg
+            if not arg = long2key[arg.substr 2]
+                addIgnored org
                 continue
-            arg = long[arg.substr 1]
+        else if arg[0] == '-'
+            if not arg = short2key[arg.substr 1]
+                addIgnored org
+                continue
         else 
             addParamOrIgnore arg
             continue
@@ -238,14 +269,17 @@ parse = (config, options={}) ->
             return if options.dontExit
             process.exit()
             
-        if result[arg] == false or result[arg] == true
-            result[arg] = not result[arg]
-        else if not isNaN Number result[arg]
-            result[arg] = parseFloat expandedArgs.shift()
-        else if arg in Object.keys(short)#.map((k) -> short[k])
-            result[arg] = expandedArgs.shift()
-        else
-            addParamOrIgnore arg
+        if 
+            result[arg] == false or result[arg] == true
+                result[arg] = not result[arg]
+            result[arg] is num
+                result[arg] = parseFloat expandedArgs.shift()
+            arg in Object.keys(short2key)
+                result[short2key[arg]] = expandedArgs.shift()
+            arg in Object.keys(long2key)
+                result[long2key[arg]] = expandedArgs.shift()
+            ➜
+                addParamOrIgnore arg
     result
 
 module.exports = parse
