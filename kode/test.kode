@@ -248,7 +248,19 @@ krg = require '../'
                 param  . *
             """ argv:['a' 'b' '3'] ▸
             param: '3'
-                
+            
+        krg """
+            short
+                files    **
+            """ argv:['d' 'e' 'f'] ▸
+            files: ['d' 'e' 'f']
+
+        krg """
+            short
+                files  some info about files  **
+            """ argv:['d' 'e' 'f'] ▸
+            files: ['d' 'e' 'f']
+            
     #  0000000   0000000    0000000  00000000  
     # 000       000   000  000       000       
     # 000       000000000  0000000   0000000   
@@ -340,5 +352,21 @@ krg = require '../'
                 newLongShort            = true -S --LS
         """ argv:['--help'], returnLog:true ▸ (a) -> 
             'usage:  shortconfig' in a
-        
+            
+        kolor.strip krg """
+            short
+                files  some info about files  **
+            """ argv:['--help'], returnLog:true ▸ (a) -> 
+            'usage:  short [files ... ]' in a and
+            'some info about files' in a
+
+        kolor.strip krg """
+            short
+                files  some info about files  **
+                other  some info about other
+            """ argv:['--help'], returnLog:true ▸ (a) -> 
+            'usage:  short [files ... ]' in a and
+            'some info about files' in a
+            'some info about other' in a
+            
         
