@@ -1,5 +1,5 @@
 name            karg
-version         2.4.0
+version         2.5.0
 description     option parser
 files
                 js/karg.js
@@ -16,7 +16,7 @@ scripts
                 test    ./node_modules/.bin/kode -t kode/test.kode
 dependencies
                 klor  monsterkodi/klor
-                kstr  ^0.13.0
+                kstr  monsterkodi/kstr
                 noon  monsterkodi/noon
 devDependencies
                 kode  monsterkodi/kode
