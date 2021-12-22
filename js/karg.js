@@ -1,8 +1,8 @@
-// monsterkodi/kode 0.138.0
+// monsterkodi/kode 0.181.0
 
 var _k_ = {list: function (l) {return (l != null ? typeof l.length === 'number' ? l : [] : [])}, each_r: function (o) {return o instanceof Array ? [] : typeof o == 'string' ? o.split('') : {}}, in: function (a,l) {return (typeof l === 'string' && typeof a === 'string' && a.length ? '' : []).indexOf.call(l,a) >= 0}}
 
-var noon, kstr, expand, error, parse
+var error, expand, kstr, noon, parse
 
 require('klor').kolor.globalize()
 noon = require('noon')
@@ -41,7 +41,7 @@ error = function (msg)
 
 parse = function (config, options = {})
 {
-    var name, result, help, short, long, param, paramList, cfg, k, v, sht, lng, long2key, short2key, optionsText, maxLong, maxHelp, df, shtHelp, lngHelp, helpText, _206_19_, _207_21_, _209_21_, version, _212_28_, _213_23_, _232_23_, argv, expandedArgs, addParam, addIgnored, addParamOrIgnore, arg, org
+    var addIgnored, addParam, addParamOrIgnore, arg, argv, cfg, df, expandedArgs, help, helpText, k, lng, lngHelp, long, long2key, maxHelp, maxLong, name, optionsText, org, param, paramList, result, short, short2key, sht, shtHelp, v, version, _206_19_, _207_21_, _209_21_, _212_28_, _213_23_, _232_23_
 
     if (typeof(config) === 'string')
     {
@@ -65,9 +65,9 @@ parse = function (config, options = {})
         {   
             var m = (function (k, v)
         {
-            var o, s, cvt
+            var cvt, o, s
 
-            if (typeof(v) == 'string')
+            if (typeof(v) === 'string')
             {
                 o = {}
                 s = v.split(/\s\s+/)
@@ -99,7 +99,7 @@ parse = function (config, options = {})
                             return false
 
                         default:
-                            if (!isNaN(s) && !isNaN(parseFloat(s)) && isFinite(s))
+                            if ((function(o){return !isNaN(o) && !isNaN(parseFloat(o)) && isFinite(o)})(s))
                         {
                             return parseFloat(s)
                         }
@@ -438,7 +438,7 @@ broken key: ${bold(yellow(k))}`)
         {
             result[arg] = !result[arg]
         }
-        else if (!isNaN(result[arg]) && !isNaN(parseFloat(result[arg])) && isFinite(result[arg]))
+        else if ((function(o){return !isNaN(o) && !isNaN(parseFloat(o)) && isFinite(o)})(result[arg]))
         {
             result[arg] = parseFloat(expandedArgs.shift())
         }
