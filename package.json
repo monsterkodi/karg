@@ -1,6 +1,6 @@
 {
   "name": "karg",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "option parser",
   "files": [
     "js/karg.js"
@@ -19,7 +19,7 @@
     "test": "./node_modules/.bin/kode -t kode/test.kode"
   },
   "dependencies": {
-    "klor": "monsterkodi/klor@82fc6dceb952890343fd75bae3e9f23aa50b4b83",
+    "klor": "monsterkodi/klor#82fc6dceb952890343fd75bae3e9f23aa50b4b83",
     "kstr": "monsterkodi/kstr",
     "noon": "monsterkodi/noon"
   },
